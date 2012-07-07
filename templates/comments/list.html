@@ -1,0 +1,18 @@
+<dl id="comments">
+  {% for comment in comment_list %}
+    <a name="c{{ comment.id }}"></a>
+    <dt id="c{{ comment.id }}">
+        <strong>
+        {% if comment.url %}
+            <a href="{{ comment.url }}">{{ comment.name }}</a>
+        {% else %}
+            {{ comment.name }}
+        {% endif %}
+        </strong> - <small>{{ comment.submit_date }}</small>:
+    </dt>
+    <dd>
+        {% load markdown_deux_tags %}
+        <p>{{ comment.comment|markdown:"post_style" }}</p>
+    </dd>
+  {% endfor %}
+</dl>

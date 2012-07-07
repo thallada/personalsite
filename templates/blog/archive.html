@@ -1,0 +1,28 @@
+{% extends 'blog/base.html' %}
+{% block head %}<title>Tyler Hallada - Blog Archive</title>{% endblock %}
+{% block content %}
+    {% load i18n %}
+    {% load markdown_deux_tags %}
+    <ul type=none style="padding:0;">
+    {% for entry in entries %}
+        <li>
+            <table cellspacing="0" cellpadding="0" style=width:100%;">
+                <tr>
+                    <td><h3><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h3></td>
+                    <td style="text-align:right"><small>Posted on {{ entry.pub_date }}</small></td>
+                </tr>
+            </table>
+            <p>{{ entry.text|markdown:"post_style" }}</p>
+            {% load comments %}
+            {% get_comment_count for entry as comment_count %}
+            <p>
+                <a href="{{ entry.get_absolute_url }}#comments">
+                    <strong>{{ comment_count }}</strong> {% blocktrans count counter=comment_count %}Comment{% plural %}Comments{% endblocktrans %}
+                </a>
+            </p><br />
+        </li>
+    {% empty %}
+        <p>{% trans "There are no blog entries to show." %}</p>
+    {% endfor %}
+    </ul>
+{% endblock %}

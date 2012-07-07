@@ -1,4 +1,5 @@
 # Django settings for personalsite project.
+import os
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
@@ -102,8 +103,10 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'personalsite.urls'
 
+PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
+
 TEMPLATE_DIRS = (
-    '/home/thallada/workspace/templates/',
+    os.path.join(PROJECT_PATH, 'templates'),
 )
 
 INSTALLED_APPS = (

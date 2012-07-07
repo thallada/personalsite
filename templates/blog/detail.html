@@ -1,0 +1,21 @@
+{% extends 'blog/base.html' %}
+{% block head %}<title>{{ entry.title }}</title>{% endblock %}
+{% block content %}
+{% load i18n %}
+{% load markdown_deux_tags %}
+<small>{{ entry.pub_date }}</small>
+<h1>{{ entry.title }}</h1>
+{{ entry.text|markdown:"post_style" }}<br/>
+<br/>
+{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+<hr />
+<div id="comments">
+    {% load comments %}
+    {% get_comment_count for entry as comment_count %}
+    {% render_comment_list for entry %}
+</div>
+<br />
+<h3>{% trans "Add your own comment" %}:</h3>
+{% render_comment_form for entry %}
+<a href="http://daringfireball.net/projects/markdown/syntax">Markdown allowed</a>
+{% endblock %}

@@ -1,0 +1,18 @@
+<html>
+{% block head %}
+<head>
+   {% block title %}<title>Tyler Hallada</title>{% endblock %}
+</head>
+{% endblock %}
+<body>
+    {% block nav %}
+    <table border=1 cellpadding=3 align="center"><tr>
+        <td><a href="http://hallada.net/">Main</a></td>
+        <td><a href="/blog/">Blog</a></td>
+        <td><a href="/blog/archive/">Blog Archive</a></td>
+    </tr></table>
+    {% endblock %}
+    {% block content %}{% endblock %}
+    {% block footer %}{% endblock %}
+</body>
+</html>
