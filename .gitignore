@@ -1,0 +1,12 @@
+*~
+*.log
+*.pot
+*.py[cod]
+*.so
+*.db
+*.DS_Store
+*.png
+*.jpg
+*.swp
+venv
+old
