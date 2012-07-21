@@ -1,29 +1,45 @@
 {% extends 'blog/base.html' %}
-{% block head %}<title>Tyler Hallada - Blog</title>{% endblock %}
+{% block title %}<title>Tyler Hallada - Blog</title>{% endblock %}
+{% block nav %}
+<li class="active">
+    <a href="{% url index %}">Blog</a>
+</li>
+<li>
+    <a href="{% url archive %}">Archive</a>
+</li>
+<li>
+    <a href="http://hallada.net/projects">Projects</a>
+</li>
+{% endblock %}
 {% block content %}
     {% load i18n %}
     {% load markdown_deux_tags %}
-    <ul type=none style="padding:0;">
+    <div class = "row">
+        <br /><br />
+    </div>
     {% for entry in latest_entries %}
-        <li>
-            <table cellspacing="0" cellpadding="0" style=width:100%;">
-                <tr>
-                    <td><h3><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h3></td>
-                    <td style="text-align:right"><small>Posted on {{ entry.pub_date }}</small></td>
-                </tr>
-            </table>
-            <p>{{ entry.text|markdown:"post_style" }}</p>
-            {% load comments %}
-            {% get_comment_count for entry as comment_count %}
-            <p>
-                <a href="{{ entry.get_absolute_url }}#comments">
-                    <strong>{{ comment_count }}</strong> {% blocktrans count counter=comment_count %}Comment{% plural %}Comments{% endblocktrans %}
-                </a>
-            </p><br />
-        </li>
+    <div class="row">
+        <div class="span8" style="margin-left:0px">
+            <h1><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h1>
+        </div>
+        <div class="span4" style="text-align:right;margin-top:10px">
+            <small>Posted on {{ entry.pub_date }}</small>
+        </div>
+    </div>
+    <div class="row">
+        <p>{{ entry.text|markdown:"post_style" }}</p>
+        {% load comments %}
+        {% get_comment_count for entry as comment_count %}
+        <p>
+            <a href="{{ entry.get_absolute_url }}#comments">
+                <strong>{{ comment_count }}</strong> {% blocktrans count counter=comment_count %}Comment{% plural %}Comments{% endblocktrans %}
+            </a>
+        </p><br />
+    </div>
+    <br />
     {% empty %}
         <p>{% trans "There are no blog entries to show." %}</p>
     {% endfor %}
-    </ul>
+    </table>
     <p>See all entries in the <a href="/blog/archive/">archive</a>.</p>
 {% endblock %}
