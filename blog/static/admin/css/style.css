@@ -1,5 +1,5 @@
 body {
-    background:#EDF4DF;
+    background:Wheat;
     padding-top:40px;
 }
 a {
@@ -12,7 +12,7 @@ a:hover {
     color:#3C0101;
 }
 a.brand {
-    color:Azure;
+    color:Azure !important;
 }
 .row.header {
     background:White;
@@ -26,8 +26,16 @@ a.brand {
     border-bottom-right-radius:10px;
     padding:10px;
 }
+.row.comment {
+    background:White;
+    border-radius:10px;
+    padding:10px;
+}
+.comment-content {
+    margin-left:20px;
+}
 .span8 {
-    margin:margin-left:0px;
+    margin-left:0px;
 }
 .span4 {
     text-align:right;

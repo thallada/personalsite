@@ -3,19 +3,40 @@
 {% block content %}
 {% load i18n %}
 {% load markdown_deux_tags %}
-<small>{{ entry.pub_date }}</small>
-<h1>{{ entry.title }}</h1>
-{{ entry.text|markdown:"post_style" }}<br/>
-<br/>
-{% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-<hr />
-<div id="comments">
-    {% load comments %}
-    {% get_comment_count for entry as comment_count %}
-    {% render_comment_list for entry %}
+<div class="row header">
+    <div class="span8">
+        <h1><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h1>
+    </div>
+    <div class="span4">
+        <small>Posted on {{ entry.pub_date }}</small>
+    </div>
+</div>
+<div class="row content">
+        {{ entry.text|markdown:"post_style" }}
 </div>
 <br />
-<h3>{% trans "Add your own comment" %}:</h3>
-{% render_comment_form for entry %}
-<a href="http://daringfireball.net/projects/markdown/syntax">Markdown allowed</a>
+<br />
+<br />
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <div id="comments">
+        {% load comments %}
+        {% get_comment_count for entry as comment_count %}
+        {% get_comment_list for entry as comment_list %}
+        <div class="row comment">
+        {% for comment in comment_list %}
+            <strong>{{ comment.user_name }} - {{ comment.submit_date }}</strong><br />
+            <div class="comment-content">
+                {{ comment.comment|markdown:"post_style" }}
+            </div>
+            <hr />
+        {% endfor %}
+        </div><br />
+    </div>
+    <br />
+    <div class="row comment">
+        <h3>{% trans "Add your own comment" %}:</h3>
+        {% render_comment_form for entry %}
+        <a href="http://daringfireball.net/projects/markdown/syntax">Markdown allowed</a>
+    </div>
+</div>
 {% endblock %}

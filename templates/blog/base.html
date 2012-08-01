@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 {% block head %}
 <head>
@@ -10,30 +11,34 @@
     <link href="/static/admin/img/glyphicons-halflings.png" rel="icons">
 </head>
 {% endblock %}
-<body>
-    <div class="navbar">
-        <div class="navbar-inner">
-            <div class="container">
-                <a class="brand" href="http://hallada.net">Tyler Hallada</a>
-                <ul class="nav">
-                    {% block nav %}
-                    <li>
-                        <a href="{% url index %}">Blog</a>
-                    </li>
-                    <li>
-                        <a href="{% url archive %}">Archive</a>
-                    </li>
-                    <li>
-                        <a href="http://hallada.net/projects">Projects</a>
-                    </li>
-                    {% endblock %}
-                </ul>
-            </div>
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="brand" href="http://hallada.net">Tyler Hallada</a>
+            <ul class="nav">
+                {% block nav %}
+                <li>
+                    <a href="{% url index %}">Blog</a>
+                </li>
+                <li>
+                    <a href="{% url archive %}">Archive</a>
+                </li>
+                <li>
+                    <a href="http://hallada.net/projects">Projects</a>
+                </li>
+                {% endblock %}
+            </ul>
         </div>
     </div>
+</div>
+<div class = "row">
+    <br /><br />
+</div>
+<body>
     <div class="container">
         {% block content %}{% endblock %}
     </div>
     {% block footer %}{% endblock %}
 </body>
+<link href="/static/admin/css/style.css" rel="stylesheet">
 </html>
