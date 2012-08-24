@@ -1,5 +1,6 @@
+/* Base Formatting */
 body {
-    background:Wheat;
+    background:Azure;
     padding-top:40px;
 }
 a {
@@ -26,6 +27,11 @@ a.brand {
     border-bottom-right-radius:10px;
     padding:10px;
 }
+.row.sidebar {
+    background:White;
+}
+
+/* Detail Formatting */
 .row.comment {
     background:White;
     border-radius:10px;
@@ -34,11 +40,24 @@ a.brand {
 .comment-content {
     margin-left:20px;
 }
-.span8 {
-    margin-left:0px;
+.comment-form {
+    width:100%;
 }
-.span4 {
+#id_comment {
+    width:75%;
+}
+.comment-form.label {
+    width:10%;
+}
+.comment-form.buttons {
     text-align:right;
-    margin-top:10px;
-    margin-right:0px;
+    margin-right:25%;
+}
+
+/* Index Formatting */
+.entry-title {
+    float:left;
+}
+.entry-date {
+    float:right;
 }

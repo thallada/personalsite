@@ -4,10 +4,10 @@
 {% load i18n %}
 {% load markdown_deux_tags %}
 <div class="row header">
-    <div class="span8">
+    <div class="entry-title">
         <h1><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h1>
     </div>
-    <div class="span4">
+    <div class="entry-date">
         <small>Posted on {{ entry.pub_date }}</small>
     </div>
 </div>
@@ -35,7 +35,31 @@
     <br />
     <div class="row comment">
         <h3>{% trans "Add your own comment" %}:</h3>
-        {% render_comment_form for entry %}
+        <br />
+        {% get_comment_form for entry as form %}
+        <table class="comment-form">
+            <form action="{% comment_form_target %}" method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    {% if field.label == "Name" or field.label == "Email address" or field.label == "URL" or field.label == "Comment" %}
+                    <tr>
+                        <td class="label">{{ field.label }}</td>
+                        <td class="field">{{ field }}</td>
+                    </tr>
+                    {% else %}
+                    <tr style="display:none;">
+                        <td>{{ field }}</td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+                <tr>
+                    <td colspan="2" class="buttons">
+                        <input type="submit" name="submit" value="Post">
+                        <input type="submit" name="preview" value="Preview" style="margin-right:22%">
+                    </td>
+                </tr>
+            </form>
+        </table>
         <a href="http://daringfireball.net/projects/markdown/syntax">Markdown allowed</a>
     </div>
 </div>

@@ -16,10 +16,10 @@
     {% load markdown_deux_tags %}
     {% for entry in latest_entries %}
     <div class="row header">
-        <div class="span8">
+        <div class="entry-title">
             <h1><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h1>
         </div>
-        <div class="span4">
+        <div class="entry-date">
             <small>Posted on {{ entry.pub_date }}</small>
         </div>
     </div>

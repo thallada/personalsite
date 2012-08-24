@@ -11,6 +11,7 @@
     <link href="/static/admin/img/glyphicons-halflings.png" rel="icons">
 </head>
 {% endblock %}
+<!-- Navbar -->
 <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
@@ -31,12 +32,38 @@
         </div>
     </div>
 </div>
+<!-- Top Spacer -->
 <div class = "row">
     <br /><br />
 </div>
 <body>
     <div class="container">
-        {% block content %}{% endblock %}
+        <!-- Sidebar -->
+        <div class="row sidebar">
+            <div class="span2">
+                <div class="row">
+                    <ul>
+                        <li>
+                            <a href="{% url index %}">Blog</a>
+                        </li>
+                        <li>
+                            <a href="{% url archive %}">Archive</a>
+                        </li>
+                        <li>
+                            <a href="http://hallada.net/projects">Projects</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="row">
+                    <!-- Placeholder -->
+                    <img src="https://graph.facebook.com/tyler.hallada/picture/?type=large" alt="profile picture" />
+                </div>
+            </div>
+            <!-- Content Area -->
+            <div class="span10">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
     </div>
     {% block footer %}{% endblock %}
 </body>
