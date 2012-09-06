@@ -12,15 +12,17 @@
 </li>
 {% endblock %}
 {% block content %}
-    {% load i18n %}
-    {% load markdown_deux_tags %}
-    <ul type=none style="padding:0;">
-    {% for entry in entries %}
-        <li>
-            <td><h3><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h3></td>
-        </li>
-    {% empty %}
-        <p>{% trans "There are no blog entries to show." %}</p>
-    {% endfor %}
-    </ul>
+    <div class="content">
+        {% load i18n %}
+        {% load markdown_deux_tags %}
+        <ul type=none style="padding:0;">
+        {% for entry in entries %}
+            <li>
+                <td><h3><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h3></td>
+            </li>
+        {% empty %}
+            <p>{% trans "There are no blog entries to show." %}</p>
+        {% endfor %}
+        </ul>
+    </div>
 {% endblock %}

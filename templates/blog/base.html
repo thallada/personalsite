@@ -7,12 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="/static/admin/css/bootstrap.min.css" rel="stylesheet">
     <link href="/static/admin/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
     <script src="/static/admin/js/bootstrap.min.js"></script>
     <link href="/static/admin/img/glyphicons-halflings.png" rel="icons">
 </head>
 {% endblock %}
 <!-- Navbar -->
-<div class="navbar navbar-fixed-top">
+<!-- {# <div class="navbar navbar-fixed-top">
     <div class="navbar-inner">
         <div class="container">
             <a class="brand" href="http://hallada.net">Tyler Hallada</a>
@@ -31,18 +33,14 @@
             </ul>
         </div>
     </div>
-</div>
-<!-- Top Spacer -->
-<div class = "row">
-    <br /><br />
-</div>
+</div> #} -->
 <body>
-    <div class="container">
+    <div class="container-fluid">
         <!-- Sidebar -->
-        <div class="row sidebar">
-            <div class="span2">
-                <div class="row">
-                    <ul>
+        <div class="row-fluid">
+            <div class="span2" id="navtab">
+                <div class="row-fluid">
+                    <ul class="nav nav-tabs nav-stacked">
                         <li>
                             <a href="{% url index %}">Blog</a>
                         </li>
@@ -54,13 +52,13 @@
                         </li>
                     </ul>
                 </div>
-                <div class="row">
+                <div class="row-fluid">
                     <!-- Placeholder -->
-                    <img src="https://graph.facebook.com/tyler.hallada/picture/?type=large" alt="profile picture" />
+                    <!--<img src="https://graph.facebook.com/tyler.hallada/picture/?type=large" alt="profile picture" />-->
                 </div>
             </div>
             <!-- Content Area -->
-            <div class="span10">
+            <div class="span9">
                 {% block content %}{% endblock %}
             </div>
         </div>

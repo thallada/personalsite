@@ -1,66 +1,76 @@
 {% extends 'blog/base.html' %}
 {% block title %}<title>{{ entry.title }}</title>{% endblock %}
 {% block content %}
-{% load i18n %}
-{% load markdown_deux_tags %}
-<div class="row header">
-    <div class="entry-title">
-        <h1><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h1>
+<div class="content">
+    {% load i18n %}
+    {% load markdown_deux_tags %}
+    <div class="row-fluid header">
+        <div class="entry-title">
+            <h1><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h1>
+        </div>
+        <div class="entry-date">
+            <small>Posted on {{ entry.pub_date }}</small>
+        </div>
     </div>
-    <div class="entry-date">
-        <small>Posted on {{ entry.pub_date }}</small>
+    <div class="row-fluid entry-content">
+            {{ entry.text|markdown:"post_style" }}
     </div>
 </div>
-<div class="row content">
-        {{ entry.text|markdown:"post_style" }}
-</div>
-<br />
-<br />
-<br />
-    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
-    <div id="comments">
-        {% load comments %}
-        {% get_comment_count for entry as comment_count %}
-        {% get_comment_list for entry as comment_list %}
-        <div class="row comment">
-        {% for comment in comment_list %}
-            <strong>{{ comment.user_name }} - {{ comment.submit_date }}</strong><br />
-            <div class="comment-content">
-                {{ comment.comment|markdown:"post_style" }}
-            </div>
-            <hr />
+{% load comments %}
+{% get_comment_count for entry as comment_count %}
+{% get_comment_list for entry as comment_list %}
+{% if comment_list|length > 0 %}
+    <div class="row-fluid comment">
+    {% for comment in comment_list %}
+        <strong>{{ comment.user_name }} - {{ comment.submit_date }}</strong><br />
+        <div class="comment-content">
+            {{ comment.comment|markdown:"post_style" }}
+        </div>
+        <hr />
+    {% endfor %}
+    </div>
+{% endif %}
+<div class="row-fluid comment">
+    <h3>{% trans "Add your own comment" %}:</h3>
+    {% get_comment_form for entry as form %}
+    <form action="{% comment_form_target %}" method="post" class="form-horizontal">
+        {% csrf_token %}
+        {% for field in form %}
+            {% if field.html_name == "name" or field.html_name == "email" or field.html_name == "url" or field.html_name == "comment" %}
+                <div class="control-group">
+                    <label class="control-label" for="id_{{ field.html_name }}">{{ field.label }}</label>
+                    <div class="controls">{{ field }}</div>
+                </div>
+            {% else %}
+                <div class="control-group" style="display:none;">
+                    <div class="controls">{{ field }}</div>
+                </div>
+            {% endif %}
         {% endfor %}
-        </div><br />
-    </div>
-    <br />
-    <div class="row comment">
-        <h3>{% trans "Add your own comment" %}:</h3>
-        <br />
-        {% get_comment_form for entry as form %}
-        <table class="comment-form">
-            <form action="{% comment_form_target %}" method="post">
-                {% csrf_token %}
-                {% for field in form %}
-                    {% if field.label == "Name" or field.label == "Email address" or field.label == "URL" or field.label == "Comment" %}
-                    <tr>
-                        <td class="label">{{ field.label }}</td>
-                        <td class="field">{{ field }}</td>
-                    </tr>
-                    {% else %}
-                    <tr style="display:none;">
-                        <td>{{ field }}</td>
-                    </tr>
-                    {% endif %}
-                {% endfor %}
-                <tr>
-                    <td colspan="2" class="buttons">
-                        <input type="submit" name="submit" value="Post">
-                        <input type="submit" name="preview" value="Preview" style="margin-right:22%">
-                    </td>
-                </tr>
-            </form>
-        </table>
-        <a href="http://daringfireball.net/projects/markdown/syntax">Markdown allowed</a>
-    </div>
+        <div class="control-group">
+            <div class="controls">
+                <input type="submit" id="post-button" name="submit" value="Post">
+                <button onclick="openPreview();">Preview</button>
+            </div>
+        </div>
+    </form>
+    <a href="http://daringfireball.net/projects/markdown/syntax">Markdown allowed</a>
 </div>
+<div id="preview">
+    {{ comment.comment|markdown:"post_style" }}
+</div>
+<script>
+    function openPreview() { 
+        $('#preview').dialog({
+            buttons: {
+                Post: function() {
+                    $('#post-button').click();
+                },
+                Cancel: function() {
+                    $(this).dialog('close');
+                }
+            }
+        });
+    }
+</script>
 {% endblock %}

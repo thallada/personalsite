@@ -13,7 +13,7 @@ MANAGERS = ADMINS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/home/thallada/workspace/personalsite/db',
+        'NAME': '/home/tyler/workspace/personalsite/db',
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
@@ -166,7 +166,7 @@ MARKDOWN_DEUX_STYLES = {
             'code-friendly': None,
             'cuddled-lists': None,
             'fenced-code-blocks': None,
-        }, 
+        },
         'safe_mode':'escape',
     },
 }
