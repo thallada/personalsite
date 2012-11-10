@@ -23,7 +23,14 @@ a.brand {
 .content {
     background: White;
     padding: 10px 10px 10px 10px;
-    border-radius: 10px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+.header {
+    background: White;
+    padding: 10px 10px 10px 10px;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
 }
 
 /* Detail Formatting */

@@ -1,20 +1,18 @@
 {% extends 'blog/base.html' %}
 {% block title %}<title>{{ entry.title }}</title>{% endblock %}
 {% block content %}
-<div class="content">
-    {% load i18n %}
-    {% load markdown_deux_tags %}
-    <div class="row-fluid header">
-        <div class="entry-title">
-            <h1><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h1>
-        </div>
-        <div class="entry-date">
-            <small>Posted on {{ entry.pub_date }}</small>
-        </div>
+{% load i18n %}
+{% load markdown_deux_tags %}
+<div class="row-fluid header">
+    <div class="entry-title">
+        <h1><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h1>
     </div>
-    <div class="row-fluid entry-content">
-            {{ entry.text|markdown:"post_style" }}
+    <div class="entry-date">
+        <small>Posted on {{ entry.pub_date }}</small>
     </div>
+</div>
+<div class="row-fluid content">
+        {{ entry.text|markdown:"post_style" }}
 </div>
 {% load comments %}
 {% get_comment_count for entry as comment_count %}
