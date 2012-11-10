@@ -12,33 +12,31 @@
 </li>
 {% endblock %}
 {% block content %}
-    <div class="content">
         {% load i18n %}
-        {% load markdown_deux_tags %}
-        {% for entry in latest_entries %}
-        <div class="row-fluid header">
-            <div class="entry-title">
-                <h1><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h1>
-            </div>
-            <div class="entry-date">
-                <small>Posted on {{ entry.pub_date }}</small>
-            </div>
+    {% load markdown_deux_tags %}
+    {% for entry in latest_entries %}
+    <div class="row-fluid header">
+        <div class="entry-title">
+            <h1><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h1>
         </div>
-        <div class="row-fluid content">
-            <p>{{ entry.text|markdown:"post_style" }}</p>
-            {% load comments %}
-            {% get_comment_count for entry as comment_count %}
-            <p>
-                <a href="{{ entry.get_absolute_url }}#comments">
-                    <strong>{{ comment_count }}</strong> {% blocktrans count counter=comment_count %}Comment{% plural %}Comments{% endblocktrans %}
-                </a>
-            </p><br />
+        <div class="entry-date">
+            <small>Posted on {{ entry.pub_date }}</small>
         </div>
-        <br />
-        {% empty %}
-            <p>{% trans "There are no blog entries to show." %}</p>
-        {% endfor %}
-        </table>
-        <p><a href="/blog/archive/">See all entries in the archive.</a></p>
     </div>
+    <div class="row-fluid content">
+        <p>{{ entry.text|markdown:"post_style" }}</p>
+        {% load comments %}
+        {% get_comment_count for entry as comment_count %}
+        <p>
+            <a href="{{ entry.get_absolute_url }}#comments">
+                <strong>{{ comment_count }}</strong> {% blocktrans count counter=comment_count %}Comment{% plural %}Comments{% endblocktrans %}
+            </a>
+        </p><br />
+    </div>
+    <br />
+    {% empty %}
+        <p>{% trans "There are no blog entries to show." %}</p>
+    {% endfor %}
+    </table>
+    <p><a href="/blog/archive/">See all entries in the archive.</a></p>
 {% endblock %}
