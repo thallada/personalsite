@@ -1,6 +1,6 @@
 /* Base Formatting */
 body {
-    background:Azure;
+    background: url(/static/admin/img/creampaper.png) repeat;
     padding-top:40px;
 }
 a {

@@ -11,6 +11,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
     <script src="/static/admin/js/bootstrap.min.js"></script>
     <link href="/static/admin/img/glyphicons-halflings.png" rel="icons">
+    <link href="/static/admin/css/style.css" rel="stylesheet">
 </head>
 {% endblock %}
 <!-- Navbar -->
@@ -39,7 +40,7 @@
         <!-- Sidebar -->
         <div class="row-fluid">
             <div class="span2" id="navtab">
-                <div class="row-fluid" style="margin-top:10px;">
+                <div class="row-fluid">
                     <ul class="nav nav-tabs nav-stacked">
                         <li>
                             <a href="{% url index %}">Blog</a>
@@ -58,12 +59,11 @@
                 </div>
             </div>
             <!-- Content Area -->
-            <div class="span9">
+            <div class="span8">
                 {% block content %}{% endblock %}
             </div>
         </div>
     </div>
     {% block footer %}{% endblock %}
 </body>
-<link href="/static/admin/css/style.css" rel="stylesheet">
 </html>
