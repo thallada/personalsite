@@ -4,6 +4,7 @@ from blog.models import Entry
 from django.contrib.comments import Comment
 from django.conf import settings
 from django.http import HttpResponse
+from django.views.decorators.http import require_POST
 import json
 import markdown_deux
 
@@ -48,6 +49,7 @@ def about(request):
     # Return about me page.
     return render_to_response('blog/about.html', {})
 
+@require_POST
 def markdown_comment(request):
     # Exclusively for ajax posts. Return a user's comment in markdown converted
     # to safe html for posting.
