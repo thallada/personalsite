@@ -23,7 +23,6 @@ def get_entries(num=DEFAULT_INDEX_NUM, order_by='-pub_date'):
 
 def index(request):
     # User can request a different number of entries to show in the index
-    print request.user
     num = request.GET.get('num', DEFAULT_INDEX_NUM)
     order_by = request.GET.get('order_by', '-pub_date')
     entries = get_entries(num=num, order_by=order_by)
@@ -53,7 +52,6 @@ def markdown_comment(request):
     # Exclusively for ajax posts. Return a user's comment in markdown converted
     # to safe html for posting.
     if request.is_ajax():
-        print request.POST.get('comment', 'POST COMMENT NOT FOUND')
         return HttpResponse(json.dumps({
             'comment':markdown_deux.markdown(request.POST.get('comment', '')),
         }, ensure_ascii=False), mimetype='application/javascript')
