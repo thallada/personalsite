@@ -11,3 +11,6 @@ class Entry(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('detail', [str(self.id)])
+
+    class Meta:
+        verbose_name_plural = 'entries'
