@@ -1,25 +1,13 @@
 {% extends 'blog/base.html' %}
 {% block title %}<title>Tyler Hallada - Archive</title>{% endblock %}
-{% block nav %}
-<li>
-    <a href="{% url index %}">Blog</a>
-</li>
-<li class="active">
-    <a href="{% url archive %}">Archive</a>
-</li>
-<li>
-    <a href="http://hallada.net/projects">Projects</a>
-</li>
-{% endblock %}
 {% block content %}
-    <div class="content">
+    <div class="single-content">
         {% load i18n %}
         {% load markdown_deux_tags %}
+        
         <ul type=none style="padding:0;">
         {% for entry in entries %}
-            <li>
-                <td><h3><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h3></td>
-            </li>
+        <li>{{ entry.0 }} -- <a href="{{ entry.1.get_absolute_url }}">{{ entry.1.title }}</a></li>
         {% empty %}
             <p>{% trans "There are no blog entries to show." %}</p>
         {% endfor %}

@@ -47,26 +47,69 @@
         {% endfor %}
         <div class="control-group">
             <div class="controls">
-                <input type="submit" id="post-button" name="submit" value="Post">
-                <button onclick="openPreview();">Preview</button>
+                <input type="submit" id="post-button" class="btn" name="submit" value="Post">
+                <button id="preview-button" class="btn" onclick="openPreview(); return false;" data-loading-text="Loading..." autocomplete="off">Preview</button>
             </div>
         </div>
     </form>
     <a href="http://daringfireball.net/projects/markdown/syntax">Markdown allowed</a>
 </div>
-<div id="preview">
-    {{ comment.comment|markdown:"post_style" }}
+<div id="preview" title="Comment Preview">
+    <strong></strong><br />
+    <div id="preview-content"></div>
 </div>
 <script>
-    function openPreview() { 
-        $('#preview').dialog({
-            buttons: {
-                Post: function() {
-                    $('#post-button').click();
-                },
-                Cancel: function() {
-                    $(this).dialog('close');
+    $.ajaxSetup({ 
+        beforeSend: function(xhr, settings) {
+            function getCookie(name) {
+                var cookieValue = null;
+                if (document.cookie && document.cookie != '') {
+                    var cookies = document.cookie.split(';');
+                    for (var i = 0; i < cookies.length; i++) {
+                        var cookie = jQuery.trim(cookies[i]);
+                        // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
                 }
+            }
+            return cookieValue;
+            }
+            if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
+                // Only send the token to relative URLs i.e. locally.
+                xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
+            }
+        } 
+    }); 
+    function openPreview() { 
+        $('#preview-button').button('loading');
+        $.ajax({
+            type:'POST',
+            url:"{% url markdown_comment %}",
+            dataType:"json",
+            data: {'comment': $('#id_comment').val()},
+            success: function(data) {
+                $('#preview-content').html(data['comment']);
+                if ($('#id_url').val().length > 0) {
+                    $('#preview strong').html('<a href="'+$('#id_url').val()+'">'+$('#id_name').val()+'</a> - {% now "N j, Y, h:i a" %}');
+                } else {
+                    $('#preview strong').text($('#id_name').val()+' - {% now "N j, Y, h:i a" %}');
+                }
+                var wWidth = $(window).width();
+                var dWidth = wWidth * 0.6;
+                $('#preview').dialog({
+                    width: dWidth,
+                    buttons: {
+                        Post: function() {
+                            $('#post-button').click();
+                        },
+                        Cancel: function() {
+                            $(this).dialog('close');
+                        }
+                    }
+                });
+                $('#preview-button').button('reset');
             }
         });
     }

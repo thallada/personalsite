@@ -1,16 +1,5 @@
 {% extends 'blog/base.html' %}
 {% block title %}<title>Tyler Hallada - Blog</title>{% endblock %}
-{% block nav %}
-<li class="active">
-    <a href="{% url index %}">Blog</a>
-</li>
-<li>
-    <a href="{% url archive %}">Archive</a>
-</li>
-<li>
-    <a href="http://hallada.net/projects">Projects</a>
-</li>
-{% endblock %}
 {% block content %}
         {% load i18n %}
     {% load markdown_deux_tags %}

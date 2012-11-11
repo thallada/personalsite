@@ -1,7 +1,12 @@
 /* Base Formatting */
 body {
-    background: url(/static/admin/img/creampaper.png) repeat;
-    padding-top:40px;
+    background: url(/static/admin/img/diagonal-noise.png) repeat;
+}
+div.row-fluid.main {
+    padding-top:20px;
+}
+div.row-fluid.blog-header {
+    padding-top:10px;
 }
 a {
     color:Maroon;
@@ -32,6 +37,15 @@ a.brand {
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
 }
+span.blog-header {
+    color:Gray;
+}
+span.blog-header a:visited {
+    color:Maroon;
+}
+span.blog-header a:hover {
+    color:#3C0101;
+}
 
 /* Detail Formatting */
 .row-fluid.comment {
@@ -56,6 +70,13 @@ a.brand {
     text-align:right;
     margin-right:25%;
 }
+#preview {
+    font-size:13px;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+#preview-content {
+    margin-left:20px;
+}
 
 /* Index Formatting */
 .entry-title {
@@ -63,4 +84,11 @@ a.brand {
 }
 .entry-date {
     float:right;
+}
+
+/* About Formatting */
+.single-content {
+    background: White;
+    padding: 10px 10px 10px 10px;
+    border-radius: 10px;
 }
