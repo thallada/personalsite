@@ -40,16 +40,18 @@ def detail(request, entry_id):
 
 
 def archive(request):
-    # Show all comments. TODO: Find a slick way of displaying entries
-    # by date (year, month, day, hour...) see admin site.
+    # Show all comments sorted by date descending.
     entries = [(e.pub_date.strftime('%b %d, %Y'), e) for e in get_entries(num=0)]
     return render_to_response('blog/archive.html',
             {'entries':entries,})
 
 def about(request):
+    # Return about me page.
     return render_to_response('blog/about.html', {})
 
 def markdown_comment(request):
+    # Exclusively for ajax posts. Return a user's comment in markdown converted
+    # to safe html for posting.
     if request.is_ajax():
         print request.POST.get('comment', 'POST COMMENT NOT FOUND')
         return HttpResponse(json.dumps({
