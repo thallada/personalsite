@@ -20,11 +20,13 @@
 {% if comment_list|length > 0 %}
     <div class="row-fluid comment">
     {% for comment in comment_list %}
+        {% if comment != comment_list.0 %}
+            <hr />
+        {% endif %}
         <strong>{{ comment.user_name }} - {{ comment.submit_date }}</strong><br />
         <div class="comment-content">
             {{ comment.comment|markdown:"post_style" }}
         </div>
-        <hr />
     {% endfor %}
     </div>
 {% endif %}
