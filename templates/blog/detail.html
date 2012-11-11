@@ -55,7 +55,7 @@
     <a href="http://daringfireball.net/projects/markdown/syntax">Markdown allowed</a>
 </div>
 <div id="preview" title="Comment Preview">
-    <strong></strong><br />
+    <strong id="preview-header"></strong><br />
     <div id="preview-content"></div>
 </div>
 <script>
@@ -92,9 +92,9 @@
             success: function(data) {
                 $('#preview-content').html(data['comment']);
                 if ($('#id_url').val().length > 0) {
-                    $('#preview strong').html('<a href="'+$('#id_url').val()+'">'+$('#id_name').val()+'</a> - {% now "N j, Y, h:i a" %}');
+                    $('#preview-header').html('<a href="'+$('#id_url').val()+'">'+$('#id_name').val()+'</a> - {% now "N j, Y, h:i a" %}');
                 } else {
-                    $('#preview strong').text($('#id_name').val()+' - {% now "N j, Y, h:i a" %}');
+                    $('#preview-header').text($('#id_name').val()+' - {% now "N j, Y, h:i a" %}');
                 }
                 var wWidth = $(window).width();
                 var dWidth = wWidth * 0.6;
