@@ -1,5 +1,5 @@
 from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404, get_list_or_404
+from django.shortcuts import render_to_response, get_object_or_404
 from blog.models import Entry
 from django.contrib.comments import Comment
 from django.conf import settings
@@ -9,9 +9,9 @@ import json
 import markdown_deux
 
 DEFAULT_INDEX_NUM = getattr(settings, 'DEFAULT_INDEX_NUM', 5)
-MONTHS = {1:'January', 2:'February', 3:'March', 4:'April', 5:'May', 6:'June',
-        7:'July', 8:'August', 9:'September', 10:'October', 11:'November',
-        12:'December'}
+MONTHS = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May',
+        6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'October',
+        11: 'November', 12: 'December'}
 
 
 def get_entries(num=DEFAULT_INDEX_NUM, order_by='-pub_date'):
@@ -21,6 +21,7 @@ def get_entries(num=DEFAULT_INDEX_NUM, order_by='-pub_date'):
     if num:
         entries = entries[:int(num)]
     return entries
+
 
 def index(request):
     # User can request a different number of entries to show in the index
@@ -41,13 +42,16 @@ def detail(request, entry_id):
 
 def archive(request):
     # Show all comments sorted by date descending.
-    entries = [(e.pub_date.strftime('%b %d, %Y'), e) for e in get_entries(num=0)]
+    entries = [(e.pub_date.strftime('%b %d, %Y'), e)
+            for e in get_entries(num=0)]
     return render_to_response('blog/archive.html',
-            {'entries':entries,})
+            {'entries': entries})
+
 
 def about(request):
     # Return about me page.
     return render_to_response('blog/about.html', {})
+
 
 @require_POST
 def markdown_comment(request):
@@ -55,5 +59,5 @@ def markdown_comment(request):
     # to safe html for posting.
     if request.is_ajax():
         return HttpResponse(json.dumps({
-            'comment':markdown_deux.markdown(request.POST.get('comment', '')),
+            'comment': markdown_deux.markdown(request.POST.get('comment', '')),
         }, ensure_ascii=False), mimetype='application/javascript')
