@@ -2,9 +2,6 @@
 body {
     background: url(/static/admin/img/diagonal-noise.png) repeat;
 }
-div.row-fluid.main {
-    padding-top:20px;
-}
 div.row-fluid.blog-header {
     padding-top:10px;
 }
@@ -22,6 +19,7 @@ a.brand {
 }
 #navtab {
     background: White;
+    margin-top: 20px;
     padding: 10px 10px 10px 10px;
     border-radius: 10px;
 }
@@ -34,6 +32,7 @@ a.brand {
 .header {
     background: White;
     padding: 10px 10px 10px 10px;
+    margin-top: 20px;
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
 }
