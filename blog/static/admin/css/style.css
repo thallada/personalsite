@@ -89,3 +89,7 @@ span.blog-header {
     margin-top:20px;
     margin-right:-20px;
 }
+.image {
+    float:left;
+    margin-right: 10px;
+}
