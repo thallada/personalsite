@@ -6,16 +6,23 @@
     {% for project in projects %}
     <div class="row-fluid header">
         <div class="entry-title">
-            <h2><a href="{{ project.link }}">{{ project.title }}</a></h2>
+            <h3><a href="{{ project.link }}">{{ project.title }}</a></h3>
         </div>
         <div class="entry-date">
-            <small>Posted on {{ project.pub_date }}</small>
+            {% if project.is_finished %}
+            <i class="icon-ok"></i> Finished
+                {% if project.done_date %} on {{ project.done_date }}{% endif %}
+            {% else %}
+                <i class="icon-wrench"></i> In Progress
+            {% endif %}
         </div>
     </div>
     <div class="row-fluid content">
-        {{ project.desc }}
+        {{ project.desc|markdown:"post_style" }}
     </div>
     {% empty %}
+    <div class="single-content">
         <p>{% trans "There are no projects here yet." %}</p>
+    </div>
     {% endfor %}
 {% endblock %}

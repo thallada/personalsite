@@ -1,4 +1,4 @@
-from blog.models import Entry
+from blog.models import Entry, Project, Tag
 from django.contrib import admin
 from django.contrib import comments
 
@@ -11,3 +11,5 @@ class EntryAdmin(admin.ModelAdmin):
 
 admin.site.register(Entry, EntryAdmin)
 admin.site.register(comments.models.CommentFlag)
+admin.site.register(Project)
+admin.site.register(Tag)

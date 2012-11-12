@@ -1,6 +1,6 @@
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
-from blog.models import Entry
+from blog.models import Entry, Project
 from django.contrib.comments import Comment
 from django.conf import settings
 from django.http import HttpResponse
@@ -158,6 +158,11 @@ def archive(request):
 def about(request):
     # Return about me page.
     return render_to_response('blog/about.html', {})
+
+
+def projects(request):
+    projects = Project.objects.all()
+    return render_to_response('blog/projects.html', {'projects': projects})
 
 
 @require_POST
