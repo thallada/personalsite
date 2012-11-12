@@ -171,3 +171,5 @@ MARKDOWN_DEUX_STYLES = {
         'safe_mode':'escape',
     },
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -53,18 +53,14 @@ span.blog-header {
 .comment-content {
     margin-left:20px;
 }
-.comment-form {
-    width:100%;
-}
 #id_comment {
     width:75%;
 }
-.comment-form.label {
-    width:10%;
+.comment-header {
+    float:left;
 }
-.comment-form.buttons {
-    text-align:right;
-    margin-right:25%;
+.comment-actions {
+    float:right;
 }
 #preview {
     font-size:13px;

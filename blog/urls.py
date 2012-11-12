@@ -7,6 +7,8 @@ urlpatterns = patterns('blog.views',
     url(r'^archive/$', 'archive', name='archive'),
     url(r'^about/$', 'about', name='about'),
     url(r'^ajax/mardown_comment/$', 'markdown_comment', name='markdown_comment'),
+    url(r'^ajax/get_comment/$', 'get_comment', name='get_comment'),
+    url(r'^ajax/flag_comment/$', 'flag_comment', name='flag_comment'),
 )
 
 urlpatterns += staticfiles_urlpatterns()

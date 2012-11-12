@@ -11,6 +11,8 @@ from django.utils.html import escape
 from django.db import models
 from django.contrib import comments
 from django.contrib.comments import signals
+from django.contrib.auth.models import User
+from django.http import Http404
 import json
 import markdown_deux
 
@@ -102,6 +104,7 @@ def detail(request, entry_id, next=None, using=None):
                     'comment': form.data.get('comment', ''),
                     'form': form,
                     'entry': e,
+                    'comments': c,
                     'success': success,
                 },
                 context_instance=RequestContext(request)
@@ -166,3 +169,38 @@ def markdown_comment(request):
             'comment': markdown_deux.markdown(request.POST.get('comment', ''),
                     style="post_style"),
         }, ensure_ascii=False), mimetype='application/javascript')
+
+
+def get_comment(request):
+    if request.is_ajax():
+        id = request.GET.get('id', None)
+        if not id:
+            raise Http404
+        comment = get_object_or_404(comments.get_model(), pk=id)
+        return HttpResponse(json.dumps({
+                'text': comment.comment,
+                'user': comment.user_name,
+                },
+                ensure_ascii=False), mimetype='application/javascript')
+
+def flag_comment(request):
+    if request.is_ajax():
+        id = request.GET.get('id', None)
+        if not id:
+            raise Http404
+        comment = get_object_or_404(comments.get_model(), pk=id)
+        flag, created = comments.models.CommentFlag.objects.get_or_create(
+            comment = comment,
+            user    = User.objects.all()[0],
+            flag    = comments.models.CommentFlag.SUGGEST_REMOVAL
+        )
+        signals.comment_was_flagged.send(
+            sender  = comment.__class__,
+            comment = comment,
+            flag    = flag,
+            created = created,
+            request = request,
+        )
+        return HttpResponse(json.dumps({'success': True}, ensure_ascii=False),
+                mimetype='application/javascript')
+
