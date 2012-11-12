@@ -41,6 +41,8 @@ def detail(request, entry_id, next=None, using=None):
     # Show one specific entry including comments
     e = get_object_or_404(Entry, pk=entry_id)
     c = Comment.objects.filter(object_pk=entry_id)
+    success = False
+    comment = None
 
     if (request.method == 'POST'):
         # Following code is taken mostly from the django.contrib.comments model,
@@ -100,6 +102,7 @@ def detail(request, entry_id, next=None, using=None):
                     'comment': form.data.get('comment', ''),
                     'form': form,
                     'entry': e,
+                    'success': success,
                 },
                 context_instance=RequestContext(request)
             )
@@ -130,8 +133,14 @@ def detail(request, entry_id, next=None, using=None):
             request = request
         )
 
-    return render_to_response('blog/detail.html', {'entry': e, 'comments': c,
-            'next': e.get_absolute_url()},
+        success = True
+
+    return render_to_response('blog/detail.html', {
+            'entry': e,
+            'comments': c,
+            'success': success,
+            'comment': comment,
+            },
             context_instance=RequestContext(request))
 
 
@@ -154,5 +163,6 @@ def markdown_comment(request):
     # to safe html for posting.
     if request.is_ajax():
         return HttpResponse(json.dumps({
-            'comment': markdown_deux.markdown(request.POST.get('comment', '')),
+            'comment': markdown_deux.markdown(request.POST.get('comment', ''),
+                    style="post_style"),
         }, ensure_ascii=False), mimetype='application/javascript')

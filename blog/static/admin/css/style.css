@@ -6,16 +6,13 @@ div.row-fluid.blog-header {
     padding-top:10px;
 }
 a {
-    color:Maroon;
+    color:FireBrick;
 }
 a:visited {
-    color:#3C0101;
+    color:FireBrick;
 }
 a:hover {
-    color:#3C0101;
-}
-a.brand {
-    color:Azure !important;
+    color:FireBrick;
 }
 #navtab {
     background: White;
@@ -23,27 +20,27 @@ a.brand {
     padding: 10px 10px 10px 10px;
     border-radius: 10px;
 }
+.nabtab-row {
+    margin-right:10px;
+}
 .content {
     background: White;
-    padding: 10px 10px 10px 10px;
+    padding: 0px 10px 10px 10px;
     border-bottom-right-radius: 10px;
     border-bottom-left-radius: 10px;
 }
+.content-area {
+    margin-right: 20px;
+}
 .header {
     background: White;
-    padding: 10px 10px 10px 10px;
+    padding: 10px 10px 0px 10px;
     margin-top: 20px;
     border-top-right-radius: 10px;
     border-top-left-radius: 10px;
 }
 span.blog-header {
     color:Gray;
-}
-span.blog-header a:visited {
-    color:Maroon;
-}
-span.blog-header a:hover {
-    color:#3C0101;
 }
 
 /* Detail Formatting */
@@ -84,10 +81,15 @@ span.blog-header a:hover {
 .entry-date {
     float:right;
 }
+.archive-link {
+    margin-top:10px;
+}
 
 /* About Formatting */
 .single-content {
     background: White;
     padding: 10px 10px 10px 10px;
     border-radius: 10px;
+    margin-top:20px;
+    margin-right:-20px;
 }

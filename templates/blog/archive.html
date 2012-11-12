@@ -7,7 +7,7 @@
         
         <ul type=none style="padding:0;">
         {% for entry in entries %}
-        <li>{{ entry.0 }} -- <a href="{{ entry.1.get_absolute_url }}">{{ entry.1.title }}</a></li>
+        <li><a href="{{ entry.1.get_absolute_url }}">{{ entry.0 }} -- {{ entry.1.title }}</a></li>
         {% empty %}
             <p>{% trans "There are no blog entries to show." %}</p>
         {% endfor %}

@@ -3,9 +3,31 @@
 {% block content %}
 {% load i18n %}
 {% load markdown_deux_tags %}
+{% if form.errors %}
+    <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <h4>Error posting comment</h4>
+        <ul>
+            {% for field in form %}
+                {% if field.errors %}
+                <li><a href="#id_{{ field.html_name }}">{{ field.label }}: {% for e in field.errors %}{{ e }} {% endfor %}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+{% if success %}
+    <div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <h4>Successfully posted comment</h4>
+        {% if comment %}
+            <a href="#comment_{{ comment.id }}" style="color:green;">View your comment</a>
+        {% endif %}
+    </div>
+{% endif %}
 <div class="row-fluid header">
     <div class="entry-title">
-        <h1><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h1>
+        <h2><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h2>
     </div>
     <div class="entry-date">
         <small>Posted on {{ entry.pub_date }}</small>
@@ -19,19 +41,22 @@
 {% get_comment_list for entry as comment_list %}
 {% if comment_list|length > 0 %}
     <div class="row-fluid comment">
-    {% for comment in comment_list %}
+    {% for comment in comment_list reversed %}
+        <div id="comment_{{ comment.id }}">
+            <strong>{% if comment.user_url %}<a href="{{ comment.user_url }}">{{ comment.user_name }}</a>{% else %}{{ comment.user_name }}{% endif %} - {{ comment.submit_date }}</strong><br />
+            <div class="comment-content">
+                {{ comment.comment|markdown:"post_style" }}
+            </div>
+        </div>
         {% if comment != comment_list.0 %}
             <hr />
         {% endif %}
-        <strong>{{ comment.user_name }} - {{ comment.submit_date }}</strong><br />
-        <div class="comment-content">
-            {{ comment.comment|markdown:"post_style" }}
-        </div>
     {% endfor %}
     </div>
 {% endif %}
 <div class="row-fluid comment">
-    <h3>{% trans "Add your own comment" %}:</h3>
+    <h3>{% trans "Comment on this post" %}:</h3>
+    <br />
     {% if form %}{% else %}
         {% get_comment_form for entry as form %}
     {% endif %}
@@ -40,7 +65,7 @@
         {% for field in form %}
             {% if field.html_name == "name" or field.html_name == "email" or field.html_name == "url" or field.html_name == "comment" %}
             <div class="control-group {% if field.errors %}error{% endif %}">
-                    <label class="control-label" for="id_{{ field.html_name }}">{{ field.label }}</label>
+                <label class="control-label" for="id_{{ field.html_name }}">{{ field.label }}{% if field.field.required %}<span style="color:red;">*</span>{% endif %}</label>
                     <div class="controls">
                         {{ field }}
                         {% if field.errors %}

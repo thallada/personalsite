@@ -16,3 +16,11 @@ class Entry(models.Model):
 
     class Meta:
         verbose_name_plural = 'entries'
+
+class Project(models.Model):
+    title = models.CharField('project title', max_length=160)
+    desc = models.TextField('description')
+    link = models.URLField('link')
+    is_finished = models.BooleanField('is project finished')
+    done_date = models.DateField('date finished')
+    last_mod = models.DateTimeField('last modified', auto_now=True)

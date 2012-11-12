@@ -6,7 +6,7 @@
     {% for entry in latest_entries %}
     <div class="row-fluid header">
         <div class="entry-title">
-            <h1><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h1>
+            <h2><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h2>
         </div>
         <div class="entry-date">
             <small>Posted on {{ entry.pub_date }}</small>
@@ -16,15 +16,13 @@
         <p>{{ entry.text|markdown:"post_style" }}</p>
         {% load comments %}
         {% get_comment_count for entry as comment_count %}
-        <p>
-            <a href="{{ entry.get_absolute_url }}#comments">
-                <strong>{{ comment_count }}</strong> {% blocktrans count counter=comment_count %}Comment{% plural %}Comments{% endblocktrans %}
+        <a href="{{ entry.get_absolute_url }}#comments">
+                <i class="icon-comment"></i> <strong>{{ comment_count }}</strong> {% blocktrans count counter=comment_count %}Comment{% plural %}Comments{% endblocktrans %}
             </a>
-        </p><br />
+        <br />
     </div>
     {% empty %}
         <p>{% trans "There are no blog entries to show." %}</p>
     {% endfor %}
-    </table>
-    <p><a href="/blog/archive/">See all entries in the archive.</a></p>
+    <p class="archive-link"><a href="/blog/archive/">See all entries in the archive.</a></p>
 {% endblock %}
