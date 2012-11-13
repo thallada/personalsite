@@ -42,6 +42,14 @@ a:hover {
 span.blog-header {
     color:Gray;
 }
+.social-media {
+    text-align:center;
+    margin-left:-5%;
+}
+.social-media a {
+    margin-right:5%;
+    margin-left:5%;
+}
 
 /* Detail Formatting */
 .row-fluid.comment {
@@ -74,8 +82,12 @@ span.blog-header {
 .entry-title {
     float:left;
 }
+.entry-title h1,h2,h3 {
+    margin-top:0px;
+}
 .entry-date {
     float:right;
+    margin-top:5px;
 }
 .archive-link {
     margin-top:10px;

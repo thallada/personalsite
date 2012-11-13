@@ -162,7 +162,17 @@ MARKDOWN_DEUX_STYLES = {
         },
         "safe_mode": "escape",
     },
+    # style for posts I (the admin) make. Html is allowed.
     'post_style': {
+        'extras': {
+            'code-friendly': None,
+            'cuddled-lists': None,
+            'fenced-code-blocks': None,
+        },
+        'safe_mode':False,
+    },
+    # style for commenting users. Html disallowed for security reasons.
+    'comment_style': {
         'extras': {
             'code-friendly': None,
             'cuddled-lists': None,
@@ -170,6 +180,7 @@ MARKDOWN_DEUX_STYLES = {
         },
         'safe_mode':'escape',
     },
+
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

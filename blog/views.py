@@ -172,7 +172,7 @@ def markdown_comment(request):
     if request.is_ajax():
         return HttpResponse(json.dumps({
             'comment': markdown_deux.markdown(request.POST.get('comment', ''),
-                    style="post_style"),
+                    style="comment_style"),
         }, ensure_ascii=False), mimetype='application/javascript')
 
 

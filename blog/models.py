@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.urlresolvers import reverse
 from django.contrib.comments.signals import comment_was_flagged, comment_was_posted
 from django.dispatch import receiver
 from django.core.mail import send_mail
@@ -7,6 +8,9 @@ from django.conf import settings
 
 class Tag(models.Model):
     name = models.CharField('name', max_length=100)
+
+    def __unicode__(self):
+        return self.name
 
 
 class Entry(models.Model):
@@ -21,7 +25,7 @@ class Entry(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('detail', [str(self.id)])
+        return reverse('detail', [str(self.id)])
 
     class Meta:
         verbose_name_plural = 'entries'
@@ -35,6 +39,13 @@ class Project(models.Model):
     done_date = models.DateField('date finished', null=True, blank=True)
     last_mod = models.DateTimeField('last modified', auto_now=True)
     tags = models.ManyToManyField(Tag, null=True, blank=True)
+
+    def __unicode__(self):
+        return self.title
+
+    def get_absolute_url(self):
+        return reverse('projects')+'#project_'+self.id
+
 
 @receiver(comment_was_posted)
 def comment_handler(sender, **kwargs):

@@ -64,7 +64,7 @@
                 </div>
                 <br />
                 <div class="comment-content">
-                    {{ comment.comment|markdown:"post_style" }}
+                    {{ comment.comment|markdown:"comment_style" }}
                 </div>
             </div>
         {% endif %}
@@ -184,7 +184,7 @@
                 var lines = data.text.split('\n');
                 var indented = 'Re: ['+data.user+'](#comment_'+id+')\n\n';
                 $.each(lines, function(key, line) {
-                    indented = indented + '> ' + line + '\n';
+                    indented = indented + '> ' + line + '\n\n';
                 });
                 $('#id_comment').prepend(indented);
             }
