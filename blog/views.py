@@ -13,36 +13,40 @@ from django.contrib import comments
 from django.contrib.comments import signals
 from django.contrib.auth.models import User
 from django.http import Http404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
 import markdown_deux
 
 DEFAULT_INDEX_NUM = getattr(settings, 'DEFAULT_INDEX_NUM', 5)
+DEFAULT_PROJECTS_NUM = getattr(settings, 'DEFAULT_PROJECTS_NUM', 10)
 MONTHS = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May',
         6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'October',
         11: 'November', 12: 'December'}
 
 
-def get_entries(num=DEFAULT_INDEX_NUM, order_by='-pub_date'):
-    # Get all the latest entries by default or 'num' entries posted
-    # ordered by 'order_by'. Entries are sanitized.
-    entries = Entry.objects.all().order_by(order_by)
-    if num:
-        entries = entries[:int(num)]
-    return entries
-
-
 def index(request):
-    # User can request a different number of entries to show in the index
+    # User can request a different number of entries to show on first page
+    # and in what order
     num = request.GET.get('num', DEFAULT_INDEX_NUM)
     order_by = request.GET.get('order_by', '-pub_date')
-    entries = get_entries(num=num, order_by=order_by)
-    return render_to_response('blog/index.html', {'latest_entries': entries})
+    entries_list = Entry.objects.all().order_by(order_by)
+    paginator = Paginator(entries_list, num) # Show num entries per page
+    page = request.GET.get('page')
+    try:
+        entries = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        entries = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        entries = paginator.page(paginator.num_pages)
+    return render_to_response('blog/index.html', {'entries': entries})
 
 
-def detail(request, entry_id, next=None, using=None):
+def detail(request, slug, next=None, using=None):
     # Show one specific entry including comments
-    e = get_object_or_404(Entry, pk=entry_id)
-    c = Comment.objects.filter(object_pk=entry_id)
+    e = get_object_or_404(Entry, slug=slug)
+    c = Comment.objects.filter(object_pk=e.id)
     success = False
     comment = None
 
@@ -150,7 +154,7 @@ def detail(request, entry_id, next=None, using=None):
 def archive(request):
     # Show all comments sorted by date descending.
     entries = [(e.pub_date.strftime('%b %d, %Y'), e)
-            for e in get_entries(num=0)]
+            for e in Entry.objects.all()]
     return render_to_response('blog/archive.html',
             {'entries': entries})
 
@@ -161,8 +165,19 @@ def about(request):
 
 
 def projects(request):
-    projects = Project.objects.all()
-    return render_to_response('blog/projects.html', {'projects': projects})
+    num = request.GET.get('num', DEFAULT_PROJECTS_NUM)
+    projects_list = Project.objects.all()
+    paginator = Paginator(projects_list, num) # Show num projects per page
+    page = request.GET.get('page')
+    try:
+        projects = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        projects = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        projects = paginator.page(paginator.num_pages)
+    return render_to_response('blog/index.html', {'projects': projects})
 
 
 @require_POST

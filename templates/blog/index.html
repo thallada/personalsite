@@ -3,7 +3,7 @@
 {% block content %}
         {% load i18n %}
     {% load markdown_deux_tags %}
-    {% for entry in latest_entries %}
+    {% for entry in entries %}
     <div class="row-fluid header">
         <div class="entry-title">
             <h2><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h2>
@@ -22,7 +22,17 @@
         <br />
     </div>
     {% empty %}
-        <p>{% trans "There are no blog entries to show." %}</p>
+    <div class="single-content">
+        <p>{% trans "There are no projects to show." %}</p>
+    </div>
     {% endfor %}
-    <p class="archive-link"><a href="/blog/archive/">See all entries in the archive.</a></p>
+    <div class="pagination pagination-centered">
+        <ul style="background:white;">
+            <li{% if not entries.has_previous %} class="disabled"><span>«</span>{% else %}><a href="?page={{ entries.previous_page_number }}">«</a>{% endif %}</li>
+            {% for page in entries.paginator.page_range %}
+            <li{% if page == entries.number %} class="active"><span>{{ page }}</span>{% else %}><a href="?page={{ page }}">{{ page }}</a>{% endif %}</li>
+            {% endfor %}
+            <li{% if not entries.has_next %} class="disabled"><span>»</span>{% else %}><a href="?page={{ entries.next_page_number }}">»</a>{% endif %}</li>
+        </ul>
+    </div>
 {% endblock %}

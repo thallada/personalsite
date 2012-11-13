@@ -29,4 +29,13 @@
         <p>{% trans "There are no projects here yet." %}</p>
     </div>
     {% endfor %}
+    <div class="pagination pagination-centered">
+        <ul style="background:white;">
+            <li{% if not projects.has_previous %} class="disabled"><span>«</span>{% else %}><a href="?page={{ projects.previous_page_number }}">«</a>{% endif %}</li>
+            {% for page in projects.paginator.page_range %}
+            <li{% if page == projects.number %} class="active"><span>{{ page }}</span>{% else %}><a href="?page={{ page }}">{{ page }}</a>{% endif %}</li>
+            {% endfor %}
+            <li{% if not projects.has_next %} class="disabled"><span>»</span>{% else %}><a href="?page={{ projects.next_page_number }}">»</a>{% endif %}</li>
+        </ul>
+    </div>
 {% endblock %}

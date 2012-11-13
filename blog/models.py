@@ -14,7 +14,8 @@ class Tag(models.Model):
 
 
 class Entry(models.Model):
-    title = models.CharField('entry title', max_length=160)
+    title = models.CharField('entry title', max_length=160, unique=True)
+    slug = models.SlugField('slug', max_length=100, unique=True)
     text = models.TextField()
     pub_date = models.DateTimeField('date published', auto_now_add=True)
     last_mod = models.DateTimeField('last modified', auto_now=True)
@@ -25,7 +26,7 @@ class Entry(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return reverse('detail', [str(self.id)])
+        return ('detail', None, {'slug': self.slug})
 
     class Meta:
         verbose_name_plural = 'entries'
@@ -43,6 +44,7 @@ class Project(models.Model):
     def __unicode__(self):
         return self.title
 
+    @models.permalink
     def get_absolute_url(self):
         return reverse('projects')+'#project_'+self.id
 

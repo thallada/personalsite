@@ -152,6 +152,7 @@ LOGGING = {
 }
 
 DEFAULT_INDEX_NUM = 5
+DEFAULT_PROJECTS_NUM = 10
 
 #from markdown_deux.conf.settings import MARKDOWN_DEUX_DEFAULT_STYLE
 
