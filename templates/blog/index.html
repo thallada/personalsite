@@ -16,14 +16,23 @@
         <p>{{ entry.text|markdown:"post_style" }}</p>
         {% load comments %}
         {% get_comment_count for entry as comment_count %}
-        <a href="{{ entry.get_absolute_url }}#comments">
+        <div class="entry-comment-count">
+            <a href="{{ entry.get_absolute_url }}#comments">
                 <i class="icon-comments-alt"></i> <strong>{{ comment_count }}</strong> {% blocktrans count counter=comment_count %}Comment{% plural %}Comments{% endblocktrans %}
             </a>
+        </div>
+        <div class="entry-tags">
+            {% for t in entry.tags.all %}
+                {% with tagname=t.name|lower %}
+                    <a href="{% url tags tags=tagname %}"><span class="label">{{ t.name }}</span></a> 
+                {% endwith %}
+            {% endfor %}
+        </div>
         <br />
     </div>
     {% empty %}
     <div class="single-content">
-        <p>{% trans "There are no projects to show." %}</p>
+        <p>{% trans "There are no entries to show." %}</p>
     </div>
     {% endfor %}
     <div class="pagination pagination-centered">

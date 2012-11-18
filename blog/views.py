@@ -24,12 +24,20 @@ MONTHS = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May',
         11: 'November', 12: 'December'}
 
 
-def index(request):
+def index(request, tags=None):
     # User can request a different number of entries to show on first page
     # and in what order
     num = request.GET.get('num', DEFAULT_INDEX_NUM)
+    # replace tags arg with GET var if it exists
+    tags = request.GET.get('tag', tags)
     order_by = request.GET.get('order_by', '-pub_date')
-    entries_list = Entry.objects.all().order_by(order_by)
+    if tags:
+        tags = tags.split('+')
+        entries_list = Entry.objects.filter(tags__name__contains=tags[0])
+        for tag in tags[1:]:
+            entries_list = entries_list.filter(tags__name__contains=tag)
+    else:
+        entries_list = Entry.objects.all().order_by(order_by)
     paginator = Paginator(entries_list, num) # Show num entries per page
     page = request.GET.get('page')
     try:

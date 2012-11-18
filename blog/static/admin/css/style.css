@@ -89,8 +89,17 @@ span.blog-header {
     float:right;
     margin-top:5px;
 }
+.entry-comment-count {
+    float:left;
+}
+.entry-tags {
+    float:right;
+}
 .archive-link {
     margin-top:10px;
+}
+.label {
+    background-color:RosyBrown;
 }
 
 /* About Formatting */

@@ -8,6 +8,7 @@ urlpatterns = patterns('blog.views',
     url(r'^ajax/mardown_comment/$', 'markdown_comment', name='markdown_comment'),
     url(r'^ajax/get_comment/$', 'get_comment', name='get_comment'),
     url(r'^ajax/flag_comment/$', 'flag_comment', name='flag_comment'),
+    url(r'^tag/(?P<tags>[^\.]+)/$', 'index', name='tags'),
     url(r'^(?P<slug>[^\.]+)/$', 'detail', name='detail'),
     url(r'^$', 'index', name='index'),
 )

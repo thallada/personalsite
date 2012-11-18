@@ -10,10 +10,12 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/home/tyler/workspace/personalsite/db',
+        'NAME': os.path.join(PROJECT_PATH, 'database.db'),
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
@@ -102,8 +104,6 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'personalsite.urls'
-
-PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_PATH, 'templates'),
