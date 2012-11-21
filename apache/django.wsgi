@@ -1,8 +1,8 @@
 import os
 import sys
 
-sys.path.append('/home/tyler/workspace/')
-sys.path.append('/home/tyler/workspace/personalsite/')
+sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..', '..'))
+sys.path.append(os.path.join(os.path.abspath(os.path.dirname(__file__)), '..'))
 
 os.environ['DJANGO_SETTINGS_MODULE'] = 'personalsite.settings'
 

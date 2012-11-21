@@ -9,5 +9,6 @@
 *.swo
 venv
 apache
+static
 old
 *db
