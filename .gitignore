@@ -8,5 +8,7 @@
 *.swp
 *.sw[on]
 venv
+apache
+static
 old
-db
+*db

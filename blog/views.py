@@ -1,156 +1,168 @@
 from django.template import RequestContext
 from django.shortcuts import render_to_response, get_object_or_404
-from blog.models import Entry
+from blog.models import Entry, Project
 from django.contrib.comments import Comment
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
-from django.contrib.comments.views import CommentPostBadRequest
+from django.contrib.comments.views.comments import CommentPostBadRequest
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.utils.html import escape
 from django.db import models
 from django.contrib import comments
 from django.contrib.comments import signals
-from django.contrib.comments.views.utils import next_redirect
+from django.contrib.auth.models import User
+from django.http import Http404
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
 import markdown_deux
 
 DEFAULT_INDEX_NUM = getattr(settings, 'DEFAULT_INDEX_NUM', 5)
+DEFAULT_PROJECTS_NUM = getattr(settings, 'DEFAULT_PROJECTS_NUM', 10)
 MONTHS = {1: 'January', 2: 'February', 3: 'March', 4: 'April', 5: 'May',
         6: 'June', 7: 'July', 8: 'August', 9: 'September', 10: 'October',
         11: 'November', 12: 'December'}
 
 
-def get_entries(num=DEFAULT_INDEX_NUM, order_by='-pub_date'):
-    # Get all the latest entries by default or 'num' entries posted
-    # ordered by 'order_by'. Entries are sanitized.
-    entries = Entry.objects.all().order_by(order_by)
-    if num:
-        entries = entries[:int(num)]
-    return entries
-
-
-def index(request):
-    # User can request a different number of entries to show in the index
+def index(request, tags=None):
+    # User can request a different number of entries to show on first page
+    # and in what order
     num = request.GET.get('num', DEFAULT_INDEX_NUM)
+    # replace tags arg with GET var if it exists
+    tags = request.GET.get('tag', tags)
     order_by = request.GET.get('order_by', '-pub_date')
-    entries = get_entries(num=num, order_by=order_by)
-    return render_to_response('blog/index.html', {'latest_entries': entries})
-
-
-def detail(request, entry_id, next=None, using=None):
-    # Show one specific entry including comments
-    e = get_object_or_404(Entry, pk=entry_id)
-    c = Comment.objects.filter(object_pk=entry_id)
-
-    # Following code is taken mostly from the django.contrib.comments model,
-    # specifically from the post_comment view.
-    # Fill out some initial data fields from an authenticated user, if present
-    data = request.POST.copy()
-    if request.user.is_authenticated():
-        if not data.get('name', ''):
-            data["name"] = request.user.get_full_name() or request.user.username
-        if not data.get('email', ''):
-            data["email"] = request.user.email
-
-    # Check to see if the POST data overrides the view's next argument.
-    next = data.get("next", next)
-
-    # Look up the object we're trying to comment about
-    ctype = data.get("content_type")
-    object_pk = data.get("object_pk")
-    if ctype is None or object_pk is None:
-        return CommentPostBadRequest("Missing content_type or object_pk field.")
+    if tags:
+        tags = tags.split('+')
+        entries_list = Entry.objects.filter(tags__name__contains=tags[0])
+        for tag in tags[1:]:
+            entries_list = entries_list.filter(tags__name__contains=tag)
+    else:
+        entries_list = Entry.objects.all().order_by(order_by)
+    paginator = Paginator(entries_list, num) # Show num entries per page
+    page = request.GET.get('page')
     try:
-        model = models.get_model(*ctype.split(".", 1))
-        target = model._default_manager.using(using).get(pk=object_pk)
-    except TypeError:
-        return CommentPostBadRequest(
-            "Invalid content_type value: %r" % escape(ctype))
-    except AttributeError:
-        return CommentPostBadRequest(
-            "The given content-type %r does not resolve to a valid model." % \
-                escape(ctype))
-    except ObjectDoesNotExist:
-        return CommentPostBadRequest(
-            "No object matching content-type %r and object PK %r exists." % \
-                (escape(ctype), escape(object_pk)))
-    except (ValueError, ValidationError), e:
-        return CommentPostBadRequest(
-            "Attempting go get content-type %r and object PK %r exists raised %s" % \
-                (escape(ctype), escape(object_pk), e.__class__.__name__))
+        entries = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        entries = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        entries = paginator.page(paginator.num_pages)
+    return render_to_response('blog/index.html', {'entries': entries})
 
-    # Do we want to preview the comment?
-    preview = "preview" in data
 
-    # Construct the comment form
-    form = comments.get_form()(target, data=data)
+def detail(request, slug, next=None, using=None):
+    # Show one specific entry including comments
+    e = get_object_or_404(Entry, slug=slug)
+    c = Comment.objects.filter(object_pk=e.id)
+    success = False
+    comment = None
 
-    # Check security information
-    if form.security_errors():
-        return CommentPostBadRequest(
-            "The comment form failed security verification: %s" % \
-                escape(str(form.security_errors())))
+    if (request.method == 'POST'):
+        # Following code is taken mostly from the django.contrib.comments model,
+        # specifically from the post_comment view.
 
-    # If there are errors or if we requested a preview show the comment
-    if form.errors or preview:
-        template_list = [
-            # These first two exist for purely historical reasons.
-            # Django v1.0 and v1.1 allowed the underscore format for
-            # preview templates, so we have to preserve that format.
-            "comments/%s_%s_preview.html" % (model._meta.app_label, model._meta.module_name),
-            "comments/%s_preview.html" % model._meta.app_label,
-            # Now the usual directory based template hierarchy.
-            "comments/%s/%s/preview.html" % (model._meta.app_label, model._meta.module_name),
-            "comments/%s/preview.html" % model._meta.app_label,
-            "comments/preview.html",
-        ]
-        return render_to_response(
-            template_list, {
-                "comment": form.data.get("comment", ""),
-                "form": form,
-                "next": next,
-            },
-            RequestContext(request, {})
+        # Fill out some initial data fields from an authenticated user, if present
+        data = request.POST.copy()
+        if request.user.is_authenticated():
+            if not data.get('name', ''):
+                data["name"] = request.user.get_full_name() or request.user.username
+            if not data.get('email', ''):
+                data["email"] = request.user.email
+
+        # Check to see if the POST data overrides the view's next argument.
+        #next = data.get("next", next)
+
+        # Look up the object we're trying to comment about
+        ctype = data.get("content_type")
+        object_pk = data.get("object_pk")
+        if ctype is None or object_pk is None:
+            return CommentPostBadRequest("Missing content_type or object_pk field.")
+        try:
+            model = models.get_model(*ctype.split(".", 1))
+            target = model._default_manager.using(using).get(pk=object_pk)
+        except TypeError:
+            return CommentPostBadRequest(
+                "Invalid content_type value: %r" % escape(ctype))
+        except AttributeError:
+            return CommentPostBadRequest(
+                "The given content-type %r does not resolve to a valid model." % \
+                    escape(ctype))
+        except ObjectDoesNotExist:
+            return CommentPostBadRequest(
+                "No object matching content-type %r and object PK %r exists." % \
+                    (escape(ctype), escape(object_pk)))
+        except (ValueError, ValidationError), e:
+            return CommentPostBadRequest(
+                "Attempting go get content-type %r and object PK %r exists raised %s" % \
+                    (escape(ctype), escape(object_pk), e.__class__.__name__))
+
+        # Do we want to preview the comment?
+        #preview = "preview" in data
+
+        # Construct the comment form
+        form = comments.get_form()(target, data=data)
+
+        # Check security information
+        if form.security_errors():
+            return CommentPostBadRequest(
+                "The comment form failed security verification: %s" % \
+                    escape(str(form.security_errors())))
+
+        # If there are errors
+        if form.errors:
+            return render_to_response(
+                'blog/detail.html', {
+                    'comment': form.data.get('comment', ''),
+                    'form': form,
+                    'entry': e,
+                    'comments': c,
+                    'success': success,
+                },
+                context_instance=RequestContext(request)
+            )
+
+        # Otherwise create the comment
+        comment = form.get_comment_object()
+        comment.ip_address = request.META.get("REMOTE_ADDR", None)
+        if request.user.is_authenticated():
+            comment.user = request.user
+
+        # Signal that the comment is about to be saved
+        responses = signals.comment_will_be_posted.send(
+            sender  = comment.__class__,
+            comment = comment,
+            request = request
         )
 
-    # Otherwise create the comment
-    comment = form.get_comment_object()
-    comment.ip_address = request.META.get("REMOTE_ADDR", None)
-    if request.user.is_authenticated():
-        comment.user = request.user
+        for (receiver, response) in responses:
+            if response == False:
+                return CommentPostBadRequest(
+                    "comment_will_be_posted receiver %r killed the comment" % receiver.__name__)
 
-    # Signal that the comment is about to be saved
-    responses = signals.comment_will_be_posted.send(
-        sender  = comment.__class__,
-        comment = comment,
-        request = request
-    )
+        # Save the comment and signal that it was saved
+        comment.save()
+        signals.comment_was_posted.send(
+            sender  = comment.__class__,
+            comment = comment,
+            request = request
+        )
 
-    for (receiver, response) in responses:
-        if response == False:
-            return CommentPostBadRequest(
-                "comment_will_be_posted receiver %r killed the comment" % receiver.__name__)
+        success = True
 
-    # Save the comment and signal that it was saved
-    comment.save()
-    signals.comment_was_posted.send(
-        sender  = comment.__class__,
-        comment = comment,
-        request = request
-    )
-
-    return next_redirect(data, next, comment_done, c=comment._get_pk_val())
-
-    return render_to_response('blog/detail.html', {'entry': e, 'comments': c,
-            'next': e.get_absolute_url()},
+    return render_to_response('blog/detail.html', {
+            'entry': e,
+            'comments': c,
+            'success': success,
+            'comment': comment,
+            },
             context_instance=RequestContext(request))
 
 
 def archive(request):
     # Show all comments sorted by date descending.
     entries = [(e.pub_date.strftime('%b %d, %Y'), e)
-            for e in get_entries(num=0)]
+            for e in Entry.objects.all()]
     return render_to_response('blog/archive.html',
             {'entries': entries})
 
@@ -160,11 +172,63 @@ def about(request):
     return render_to_response('blog/about.html', {})
 
 
+def projects(request):
+    num = request.GET.get('num', DEFAULT_PROJECTS_NUM)
+    projects_list = Project.objects.all()
+    paginator = Paginator(projects_list, num) # Show num projects per page
+    page = request.GET.get('page')
+    try:
+        projects = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        projects = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        projects = paginator.page(paginator.num_pages)
+    return render_to_response('blog/index.html', {'projects': projects})
+
+
 @require_POST
 def markdown_comment(request):
     # Exclusively for ajax posts. Return a user's comment in markdown converted
     # to safe html for posting.
     if request.is_ajax():
         return HttpResponse(json.dumps({
-            'comment': markdown_deux.markdown(request.POST.get('comment', '')),
+            'comment': markdown_deux.markdown(request.POST.get('comment', ''),
+                    style="comment_style"),
         }, ensure_ascii=False), mimetype='application/javascript')
+
+
+def get_comment(request):
+    if request.is_ajax():
+        id = request.GET.get('id', None)
+        if not id:
+            raise Http404
+        comment = get_object_or_404(comments.get_model(), pk=id)
+        return HttpResponse(json.dumps({
+                'text': comment.comment,
+                'user': comment.user_name,
+                },
+                ensure_ascii=False), mimetype='application/javascript')
+
+def flag_comment(request):
+    if request.is_ajax():
+        id = request.GET.get('id', None)
+        if not id:
+            raise Http404
+        comment = get_object_or_404(comments.get_model(), pk=id)
+        flag, created = comments.models.CommentFlag.objects.get_or_create(
+            comment = comment,
+            user    = User.objects.all()[0],
+            flag    = comments.models.CommentFlag.SUGGEST_REMOVAL
+        )
+        signals.comment_was_flagged.send(
+            sender  = comment.__class__,
+            comment = comment,
+            flag    = flag,
+            created = created,
+            request = request,
+        )
+        return HttpResponse(json.dumps({'success': True}, ensure_ascii=False),
+                mimetype='application/javascript')
+

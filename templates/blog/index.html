@@ -3,10 +3,10 @@
 {% block content %}
         {% load i18n %}
     {% load markdown_deux_tags %}
-    {% for entry in latest_entries %}
+    {% for entry in entries %}
     <div class="row-fluid header">
         <div class="entry-title">
-            <h1><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h1>
+            <h2><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h2>
         </div>
         <div class="entry-date">
             <small>Posted on {{ entry.pub_date }}</small>
@@ -16,16 +16,32 @@
         <p>{{ entry.text|markdown:"post_style" }}</p>
         {% load comments %}
         {% get_comment_count for entry as comment_count %}
-        <p>
+        <div class="entry-comment-count">
             <a href="{{ entry.get_absolute_url }}#comments">
-                <strong>{{ comment_count }}</strong> {% blocktrans count counter=comment_count %}Comment{% plural %}Comments{% endblocktrans %}
+                <i class="icon-comments-alt"></i> <strong>{{ comment_count }}</strong> {% blocktrans count counter=comment_count %}Comment{% plural %}Comments{% endblocktrans %}
             </a>
-        </p><br />
+        </div>
+        <div class="entry-tags">
+            {% for t in entry.tags.all %}
+                {% with tagname=t.name|lower %}
+                    <a href="{% url tags tags=tagname %}"><span class="label">{{ t.name }}</span></a> 
+                {% endwith %}
+            {% endfor %}
+        </div>
+        <br />
     </div>
-    <br />
     {% empty %}
-        <p>{% trans "There are no blog entries to show." %}</p>
+    <div class="single-content">
+        <p>{% trans "There are no entries to show." %}</p>
+    </div>
     {% endfor %}
-    </table>
-    <p><a href="/blog/archive/">See all entries in the archive.</a></p>
+    <div class="pagination pagination-centered">
+        <ul style="background:white;">
+            <li{% if not entries.has_previous %} class="disabled"><span>«</span>{% else %}><a href="?page={{ entries.previous_page_number }}">«</a>{% endif %}</li>
+            {% for page in entries.paginator.page_range %}
+            <li{% if page == entries.number %} class="active"><span>{{ page }}</span>{% else %}><a href="?page={{ page }}">{{ page }}</a>{% endif %}</li>
+            {% endfor %}
+            <li{% if not entries.has_next %} class="disabled"><span>»</span>{% else %}><a href="?page={{ entries.next_page_number }}">»</a>{% endif %}</li>
+        </ul>
+    </div>
 {% endblock %}

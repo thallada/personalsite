@@ -1,7 +1,7 @@
 # Django settings for personalsite project.
 import os
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -10,10 +10,12 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
+PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/home/tyler/workspace/personalsite/db',
+        'NAME': os.path.join(PROJECT_PATH, 'database.db'),
         'USER': '',
         'PASSWORD': '',
         'HOST': '',
@@ -57,7 +59,7 @@ MEDIA_URL = ''
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = os.path.join(PROJECT_PATH, 'blog', 'static')
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -102,8 +104,6 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'personalsite.urls'
-
-PROJECT_PATH = os.path.abspath(os.path.dirname(__file__))
 
 TEMPLATE_DIRS = (
     os.path.join(PROJECT_PATH, 'templates'),
@@ -152,6 +152,7 @@ LOGGING = {
 }
 
 DEFAULT_INDEX_NUM = 5
+DEFAULT_PROJECTS_NUM = 10
 
 #from markdown_deux.conf.settings import MARKDOWN_DEUX_DEFAULT_STYLE
 
@@ -162,7 +163,17 @@ MARKDOWN_DEUX_STYLES = {
         },
         "safe_mode": "escape",
     },
+    # style for posts I (the admin) make. Html is allowed.
     'post_style': {
+        'extras': {
+            'code-friendly': None,
+            'cuddled-lists': None,
+            'fenced-code-blocks': None,
+        },
+        'safe_mode':False,
+    },
+    # style for commenting users. Html disallowed for security reasons.
+    'comment_style': {
         'extras': {
             'code-friendly': None,
             'cuddled-lists': None,
@@ -170,4 +181,7 @@ MARKDOWN_DEUX_STYLES = {
         },
         'safe_mode':'escape',
     },
+
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

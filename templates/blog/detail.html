@@ -1,11 +1,41 @@
 {% extends 'blog/base.html' %}
 {% block title %}<title>{{ entry.title }}</title>{% endblock %}
+{% block head-extra %}
+    <script src="/static/admin/js/entry.js"></script>
+{% endblock %}
 {% block content %}
 {% load i18n %}
 {% load markdown_deux_tags %}
+{% if form.errors %}
+    <div class="alert alert-error">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <h4>Error posting comment</h4>
+        <ul>
+            {% for field in form %}
+                {% if field.errors %}
+                <li><a href="#id_{{ field.html_name }}">{{ field.label }}: {% for e in field.errors %}{{ e }} {% endfor %}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}
+{% if success %}
+    <div class="alert alert-success">
+        <button type="button" class="close" data-dismiss="alert">×</button>
+        <h4>Successfully posted comment</h4>
+        {% if comment %}
+            <a href="#comment_{{ comment.id }}" style="color:green;">View your comment</a>
+        {% endif %}
+    </div>
+{% endif %}
+<div class="alert alert-success" id="report-success" style="display:none;">
+    <button type="button" class="close" data-dismiss="alert">×</button>
+    <h4>Reported comment</h4>
+    Thank you for taking the time to improve the quality of discussion.
+</div>
 <div class="row-fluid header">
     <div class="entry-title">
-        <h1><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h1>
+        <h2><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h2>
     </div>
     <div class="entry-date">
         <small>Posted on {{ entry.pub_date }}</small>
@@ -13,33 +43,69 @@
 </div>
 <div class="row-fluid content">
         {{ entry.text|markdown:"post_style" }}
+        <div class="entry-tags">
+            {% for t in entry.tags.all %}
+                {% with tagname=t.name|lower %}
+                    <a href="{% url tags tags=tagname %}"><span class="label">{{ t.name }}</span></a> 
+                {% endwith %}
+            {% endfor %}
+        </div>
 </div>
 {% load comments %}
 {% get_comment_count for entry as comment_count %}
-{% get_comment_list for entry as comment_list %}
-{% if comment_list|length > 0 %}
-    <div class="row-fluid comment">
-    {% for comment in comment_list %}
-        {% if comment != comment_list.0 %}
+{% if comment_count > 0 %}
+    <div class="row-fluid comment" id="comments">
+    {% for comment in comments reversed %}
+        {% if comment.is_removed or not comment.is_public %}
+            <div id="comment_{{ comment.id }}" class="comment muted">
+                <strong>[deleted] - {{ comment.submit_date }}</strong>
+                <br />
+                <div class="comment-content">
+                    [This comment has been removed]
+                </div>
+            </div>
+        {% else %}
+            <div id="comment_{{ comment.id }}" class="comment">
+                <div class="comment-header">
+                    <strong>{% if comment.user_url %}<a href="{{ comment.user_url }}">{{ comment.user_name }}</a>{% else %}{{ comment.user_name }}{% endif %} - {{ comment.submit_date }}</strong>
+                </div>
+                <div class="comment-actions">
+                    <a href="#comment-form" onclick="reply(event);"><i class="icon-share-alt"></i> reply</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="flag(event); return false;"><i class="icon-flag"></i> report</a>
+                </div>
+                <br />
+                <div class="comment-content">
+                    {{ comment.comment|markdown:"comment_style" }}
+                </div>
+            </div>
+        {% endif %}
+        {% if comment != comments.0 %}
             <hr />
         {% endif %}
-        <strong>{{ comment.user_name }} - {{ comment.submit_date }}</strong><br />
-        <div class="comment-content">
-            {{ comment.comment|markdown:"post_style" }}
-        </div>
     {% endfor %}
     </div>
 {% endif %}
 <div class="row-fluid comment">
-    <h3>{% trans "Add your own comment" %}:</h3>
-    {% get_comment_form for entry as form %}
-    <form action="{% comment_form_target %}" method="post" class="form-horizontal">
+    <h3>{% trans "Comment on this post" %}:</h3>
+    <br />
+    {% if form %}{% else %}
+        {% get_comment_form for entry as form %}
+    {% endif %}
+    <form action="" method="post" id="comment-form" class="form-horizontal">
         {% csrf_token %}
         {% for field in form %}
             {% if field.html_name == "name" or field.html_name == "email" or field.html_name == "url" or field.html_name == "comment" %}
-                <div class="control-group">
-                    <label class="control-label" for="id_{{ field.html_name }}">{{ field.label }}</label>
-                    <div class="controls">{{ field }}</div>
+            <div class="control-group {% if field.errors %}error{% endif %}">
+                <label class="control-label" for="id_{{ field.html_name }}">{{ field.label }}{% if field.field.required %}<span style="color:red;">*</span>{% endif %}</label>
+                    <div class="controls">
+                        {{ field }}
+                        {% if field.errors %}
+                            <span class="help-inline">
+                                {% for e in field.errors %}
+                                    {{ e|escape }} 
+                                {% endfor %}
+                            </span>
+                        {% endif %}
+                    </div>
                 </div>
             {% else %}
                 <div class="control-group" style="display:none;">
@@ -49,7 +115,7 @@
         {% endfor %}
         <div class="control-group">
             <div class="controls">
-                <input type="submit" id="post-button" class="btn" name="submit" value="Post">
+                <input type="submit" id="post-button" class="btn btn-primary" name="submit" value="Post">
                 <button id="preview-button" class="btn" onclick="openPreview(); return false;" data-loading-text="Loading..." autocomplete="off">Preview</button>
             </div>
         </div>
@@ -60,60 +126,7 @@
     <strong id="preview-header"></strong><br />
     <div id="preview-content"></div>
 </div>
-<script>
-    $.ajaxSetup({ 
-        beforeSend: function(xhr, settings) {
-            function getCookie(name) {
-                var cookieValue = null;
-                if (document.cookie && document.cookie != '') {
-                    var cookies = document.cookie.split(';');
-                    for (var i = 0; i < cookies.length; i++) {
-                        var cookie = jQuery.trim(cookies[i]);
-                        // Does this cookie string begin with the name we want?
-                    if (cookie.substring(0, name.length + 1) == (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
-                    }
-                }
-            }
-            return cookieValue;
-            }
-            if (!(/^http:.*/.test(settings.url) || /^https:.*/.test(settings.url))) {
-                // Only send the token to relative URLs i.e. locally.
-                xhr.setRequestHeader("X-CSRFToken", getCookie('csrftoken'));
-            }
-        } 
-    }); 
-    function openPreview() { 
-        $('#preview-button').button('loading');
-        $.ajax({
-            type:'POST',
-            url:"{% url markdown_comment %}",
-            dataType:"json",
-            data: {'comment': $('#id_comment').val()},
-            success: function(data) {
-                $('#preview-content').html(data['comment']);
-                if ($('#id_url').val().length > 0) {
-                    $('#preview-header').html('<a href="'+$('#id_url').val()+'">'+$('#id_name').val()+'</a> - {% now "N j, Y, h:i a" %}');
-                } else {
-                    $('#preview-header').text($('#id_name').val()+' - {% now "N j, Y, h:i a" %}');
-                }
-                var wWidth = $(window).width();
-                var dWidth = wWidth * 0.6;
-                $('#preview').dialog({
-                    width: dWidth,
-                    buttons: {
-                        Post: function() {
-                            $('#post-button').click();
-                        },
-                        Cancel: function() {
-                            $(this).dialog('close');
-                        }
-                    }
-                });
-                $('#preview-button').button('reset');
-            }
-        });
-    }
-</script>
+<div id="report" title="Report Comment" style="display:none;">
+    Are you sure that you want to report this comment?
+</div>
 {% endblock %}
