@@ -7,6 +7,7 @@ from django.contrib.comments.signals import comment_was_posted
 from django.dispatch import receiver
 from django.core.mail import send_mail
 from django.conf import settings
+from django.utils.feedgenerator import Rss201rev2Feed
 
 
 class Tag(models.Model):
@@ -36,6 +37,7 @@ class Entry(models.Model):
 
 
 class EntriesFeed(Feed):
+    feed_type = Rss201rev2Feed
     title = "Tyler Hallada's latest blog entries"
     link = reverse_lazy('rss')
     description = "List of latest blog entries from Tyler Hallada's blog at " \
@@ -62,7 +64,7 @@ class Project(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return reverse('projects') + '#project_' + self.id
+        return reverse_lazy('projects') + '#project_' + self.id
 
 
 @receiver(comment_was_posted)
