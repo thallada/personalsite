@@ -38,7 +38,7 @@ class Entry(models.Model):
 
 class EntriesFeed(Feed):
     feed_type = Rss201rev2Feed
-    title = "Tyler Hallada's latest blog entries"
+    title = "Tyler Hallada"
     link = reverse_lazy('rss')
     description = "List of latest blog entries from Tyler Hallada's blog at " \
             "hallada.net."
