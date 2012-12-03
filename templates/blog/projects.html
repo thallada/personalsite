@@ -21,6 +21,11 @@
             </div>
         </div>
     </div>
+    {% if project.img_link %}
+        <div class="image">
+            <img src="{{ project.img_link }}" />
+        </div>
+    {% endif %}
     <div class="row-fluid content">
         {{ project.desc|markdown:"post_style" }}
     </div>

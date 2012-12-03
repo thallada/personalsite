@@ -54,6 +54,7 @@ class Project(models.Model):
     title = models.CharField('project title', max_length=160)
     desc = models.TextField('description')
     link = models.URLField('link', null=True, blank=True)
+    img_link = models.URLField('image link', null=True, blank=True)
     is_finished = models.BooleanField('is project finished')
     done_date = models.DateField('date finished', null=True, blank=True)
     last_mod = models.DateTimeField('last modified', auto_now=True)
