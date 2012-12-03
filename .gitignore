@@ -6,7 +6,7 @@
 *.db
 *.DS_Store
 *.swp
-*.swo
+*.sw[on]
 venv
 old
 db
