@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.syndication.views import Feed
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse_lazy
 import markdown_deux
 from django.contrib.comments.signals import comment_was_flagged
 from django.contrib.comments.signals import comment_was_posted
@@ -37,7 +37,7 @@ class Entry(models.Model):
 
 class EntriesFeed(Feed):
     title = "Tyler Hallada's latest blog entries"
-    link = reverse('rss')
+    link = reverse_lazy('rss')
     description = "List of latest blog entries from Tyler Hallada's blog at " \
             "hallada.net."
 
