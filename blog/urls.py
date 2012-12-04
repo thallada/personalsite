@@ -10,7 +10,7 @@ urlpatterns = patterns('blog.views',
     url(r'^rss/$', EntriesFeed(), name='rss'),
     url(r'^projects/$', 'projects', name='projects'),
     url(r'^resume(.pdf)?/$', RedirectView.as_view(
-            url=settings.STATIC_URL + 'resume.pdf'),
+            url=settings.STATIC_URL + 'resume.pdf')),
     url(r'^ajax/mardown_comment/$', 'markdown_comment',
             name='markdown_comment'),
     url(r'^ajax/get_comment/$', 'get_comment', name='get_comment'),
