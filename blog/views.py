@@ -185,7 +185,7 @@ def projects(request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         projects = paginator.page(paginator.num_pages)
-    return render_to_response('blog/index.html', {'projects': projects})
+    return render_to_response('blog/projects.html', {'projects': projects})
 
 
 @require_POST
