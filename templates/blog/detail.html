@@ -116,8 +116,7 @@
         <div class="control-group">
             <div class="controls">
                 <input type="submit" id="post-button" class="btn btn-primary" name="submit" value="Post">
-                {% now "N j, Y, h:i a" as date %}
-                <button id="preview-button" class="btn" onclick="openPreview('{% url markdown_comment %}', '{{ date }}' ); return false;" data-loading-text="Loading..." autocomplete="off">Preview</button>
+                <button id="preview-button" class="btn" onclick="openPreview('{% url markdown_comment %}', '{% now N j, Y, h:i a %}' ); return false;" data-loading-text="Loading..." autocomplete="off">Preview</button>
             </div>
         </div>
     </form>

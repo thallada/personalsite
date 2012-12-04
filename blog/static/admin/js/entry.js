@@ -33,7 +33,7 @@ function openPreview(url, date) {
             if ($('#id_url').val().length > 0) {
                 $('#preview-header').html('<a href="'+$('#id_url').val()+'">'+$('#id_name').val()+'</a> - ' + date);
             } else {
-                $('#preview-header').text($('#id_name').val()+' - {% now "N j, Y, h:i a" %}');
+                $('#preview-header').text($('#id_name').val()+' - ' + date);
             }
             var wWidth = $(window).width();
             var dWidth = wWidth * 0.6;
