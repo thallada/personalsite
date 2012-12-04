@@ -165,7 +165,7 @@ def archive(request):
     entries = [(e.pub_date.strftime('%b %d, %Y'), e)
             for e in Entry.objects.all()]
     return render_to_response('blog/archive.html',
-            {'entries': entries})
+            {'entries': entries}, context_instance=RequestContext(request))
 
 
 def about(request):
