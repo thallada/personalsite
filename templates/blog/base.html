@@ -5,15 +5,15 @@
     <meta charset="utf-8">
     {% block title %}<title>Tyler Hallada</title>{% endblock %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="/static/admin/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/static/admin/css/font-awesome.css" rel="stylesheet">
-    <link href="/static/admin/css/bootstrap-responsive.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}admin/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}admin/css/font-awesome.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}admin/css/bootstrap-responsive.min.css" rel="stylesheet">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.23/jquery-ui.min.js"></script>
-    <script src="/static/admin/js/bootstrap.min.js"></script>
-    <link href="/static/admin/img/glyphicons-halflings.png" rel="icons">
+    <script src="{{ STATIC_URL }}admin/js/bootstrap.min.js"></script>
+    <link href="{{ STATIC_URL }}admin/img/glyphicons-halflings.png" rel="icons">
     <link href="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.1/themes/base/jquery-ui.css" rel="stylesheet">
-    <link href="/static/admin/css/style.css" rel="stylesheet">
+    <link href="{{ STATIC_URL }}admin/css/style.css" rel="stylesheet">
     {% block head-extra %}{% endblock %}
 </head>
 {% endblock %}
