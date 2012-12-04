@@ -21,11 +21,11 @@ $.ajaxSetup({
         }
     } 
 }); 
-function openPreview() { 
+function openPreview(url) { 
     $('#preview-button').button('loading');
     $.ajax({
-        type:'POST',
-        url:"{% url markdown_comment %}",
+        type: 'POST',
+        url: url,
         dataType:"json",
         data: {'comment': $('#id_comment').val()},
         success: function(data) {
