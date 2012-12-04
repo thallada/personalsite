@@ -48,7 +48,8 @@ def index(request, tags=None):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         entries = paginator.page(paginator.num_pages)
-    return render_to_response('blog/index.html', {'entries': entries})
+    return render_to_response('blog/index.html', {'entries': entries},
+            context_instance=RequestContext(request))
 
 
 def detail(request, slug, next=None, using=None):
@@ -169,7 +170,8 @@ def archive(request):
 
 def about(request):
     # Return about me page.
-    return render_to_response('blog/about.html', {})
+    return render_to_response('blog/about.html', {},
+            context_instance=RequestContext(request))
 
 
 def projects(request):
@@ -185,7 +187,8 @@ def projects(request):
     except EmptyPage:
         # If page is out of range (e.g. 9999), deliver last page of results.
         projects = paginator.page(paginator.num_pages)
-    return render_to_response('blog/projects.html', {'projects': projects})
+    return render_to_response('blog/projects.html', {'projects': projects},
+            context_instance=RequestContext(request))
 
 
 @require_POST
