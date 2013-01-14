@@ -1,5 +1,6 @@
 # Django settings for personalsite project.
 import os
+import secret_key
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -86,7 +87,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '49e_i-zh6x2o_qx+8tt*e4ksdl3yr@^7&ib9ai_-%br7s1lgzb'
+SECRET_KEY = secret_key.SECRET_KEY
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
