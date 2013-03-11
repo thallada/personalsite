@@ -121,6 +121,7 @@ INSTALLED_APPS = (
     'django.contrib.markup',
     'markdown_deux',
     'blog',
+    'laundry',
     'south',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
