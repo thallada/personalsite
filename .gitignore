@@ -12,3 +12,4 @@ apache
 static
 old
 *db
+personalsite/secret_key.py
