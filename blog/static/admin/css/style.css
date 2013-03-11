@@ -9,16 +9,20 @@ a {
     color:FireBrick;
 }
 a:visited {
-    color:FireBrick;
+    color:#663366;
 }
 a:hover {
     color:FireBrick;
+    text-decoration: underline;
 }
 #navtab {
     background: White;
     margin-top: 20px;
     padding: 10px 10px 10px 10px;
     border-radius: 10px;
+}
+#navtab a:visited {
+    color: FireBrick;
 }
 .nabtab-row {
     margin-right:10px;
@@ -41,6 +45,9 @@ a:hover {
 }
 span.blog-header {
     color:Gray;
+}
+span.blog-header a:visited {
+    color: FireBrick;
 }
 .social-media {
     text-align:center;
