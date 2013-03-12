@@ -9,7 +9,7 @@
 *.sw[on]
 venv
 apache
-static
+blog/static/admin
 old
 *db
 personalsite/secret_key.py
