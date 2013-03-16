@@ -4,18 +4,22 @@ from models import Hall
 from django.conf import settings
 from django.http import HttpResponse
 from os.path import join
+import laundry
 
-SVG_DIR = join(settings.STATIC_ROOT, 'svg')
-SVG_URL = join(settings.STATIC_URL, 'svg')
+SVG_DIR = settings.STATIC_BLOG_ROOT
+SVG_URL = settings.STATIC_URL
 
 def main_page(request):
-    # TODO: Get residence hall from cookies
-    return render_to_response('laundry/main.html',
+    # pass the halls to the html, and let cookies/user decide which to pick
+    halls = [(hall.name, hall.id) for hall in Hall.objects.all()]
+    return render_to_response('laundry/main.html', {
+            'halls': halls,
+            },
             context_instance=RequestContext(request))
 
-    def ajax_get_current(request, hall):
-        hall_obj = get_object_or_404(Hall, pk=hall)
-        filename = hall_obj.name + '_current.svg'
-        laundry.update(hall_obj, filepath=join(SVG_DIR, filename))
-        return HttpResponse(SVG_URL, filename)
+def ajax_get_current(request, hall):
+    hall_obj = get_object_or_404(Hall, pk=hall)
+    filename = str(hall_obj.id) + '_current.svg'
+    laundry.update(hall_obj, filepath=join(SVG_DIR, filename))
+    return HttpResponse(join(SVG_URL, filename))
 

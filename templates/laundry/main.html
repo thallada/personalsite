@@ -14,21 +14,38 @@
     <script src="{{ STATIC_URL }}js/jquery.cookie.js"></script>
     <link href="{{ STATIC_URL }}admin/img/glyphicons-halflings.png" rel="icons">
     <link href="{{ STATIC_URL }}admin/css/style.css" rel="stylesheet">
+    <!-- Creative Commons - Attribution - The Noun Project -->
+    <link href="{% url favicon %}" rel="shortcut icon">
     {% block head-extra %}{% endblock %}
 </head>
 {% endblock %}
-<body>
+<script>
+var halls = {
+    {% for h in halls %}
+    "{{ h.0 }}" : {{ h.1 }},
+    {% endfor %}
+}
+</script>
+<style>
+    body {
+        background:#000000;
+    }
+</style>
+<body class="laundry">
     <div class="container">
-        <div class="row">
+        <div class="row hall-select-container">
             <select id="hall-select">
-                <option>A</option>
-                <option>B</option>
-                <option selected="selected">Whitetop Hall</option>
-                <option>C</option>
+                {% for h in halls %}
+                    {% if h.1 == 1 %}
+                        <option selected="selected">{{ h.0 }}</option>
+                    {% else %}
+                        <option>{{ h.0 }}</option>
+                    {% endif %}
+                {% endfor %}
             </select>
         </div>
-        <div class="row">
-            <div class="current-chart"></div>
+        <div class="row chart-container">
+            <div class="current-chart"><embed id="current-svg" type="image/svg+xml" /></div>
         </div>
     </div>
 </body>

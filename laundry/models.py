@@ -16,18 +16,21 @@ class LaundryMachine(models.Model):
     hall = models.ForeignKey('Hall')
 
     def get_latest_record(self):
-        return self.records[-1]
+        records = self.records.all()
+        return records[len(records)-1]
 
 class LaundryRecord(models.Model):
     AVAILABLE = 'Available'
     IN_USE = 'In Use'
     CYCLE_COMPLETE = 'Cycle Complete'
+    UNAVAILABLE = 'Unavailable'
     AVAILABILITIES = (
             (AVAILABLE, 'Available'),
             (IN_USE, 'In Use'),
             (CYCLE_COMPLETE, 'Cycle Complete'),
+            (UNAVAILABLE, 'Unavailable'),
     )
     machine = models.ForeignKey('LaundryMachine', related_name='records')
     availability = models.TextField(choices=AVAILABILITIES)
-    time_remaining = models.IntegerField()
+    time_remaining = models.IntegerField(null=True)
     timestamp = models.DateTimeField(auto_now_add=True)

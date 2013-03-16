@@ -125,3 +125,23 @@ span.blog-header a:visited {
     float:left;
     margin-right: 10px;
 }
+
+/* Laundry Formatting */
+body.laundry  {
+    background: #000000;
+}
+div.hall-select-container {
+    text-align: center;
+    margin-top: 10px;
+}
+div.chart-container {
+    text-align: center;
+}
+select#hall-select {
+    background: #202020;
+    border: 0;
+    color: #888888;
+}
+#current-svg {
+    margin-left: 125px;
+}
