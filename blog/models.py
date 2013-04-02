@@ -72,7 +72,7 @@ class Project(models.Model):
 @receiver(comment_was_posted)
 def comment_handler(sender, **kwargs):
     domain = 'http://' + get_current_site(kwargs['request']).domain
-    title = "[hallada.net] Comment was added to %s by %s" % (
+    title = "[hallada.net] Comment was added to \"%s\" by %s" % (
             kwargs['comment'].content_object.title,
             kwargs['comment'].user_name,
     )
@@ -90,7 +90,7 @@ def comment_handler(sender, **kwargs):
 @receiver(comment_was_flagged)
 def commentflag_handler(sender, **kwargs):
     domain = 'http://' + get_current_site(kwargs['request']).domain
-    title = "[hallada.net] Comment by %s on %s was flagged" % (
+    title = "[hallada.net] Comment by %s on \"%s\" was flagged" % (
             kwargs['comment'].user_name,
             kwargs['comment'].content_object.title,
     )
