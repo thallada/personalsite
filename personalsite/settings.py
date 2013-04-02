@@ -197,4 +197,9 @@ MARKDOWN_DEUX_STYLES = {
 
 }
 
+ABSOLUTE_URL_OVERRIDES = {
+    'comments.comment': lambda c: "%s#comment_%s" % \
+            (c.content_object.get_absolute_url(), c.id),
+}
+
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
