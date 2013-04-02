@@ -163,7 +163,7 @@ def detail(request, slug, next=None, using=None):
 def archive(request):
     # Show all comments sorted by date descending.
     entries = [(e.pub_date.strftime('%b %d, %Y'), e)
-            for e in Entry.objects.all()]
+            for e in reversed(Entry.objects.all())]
     return render_to_response('blog/archive.html',
             {'entries': entries}, context_instance=RequestContext(request))
 
