@@ -60,7 +60,7 @@
 {% get_comment_count for entry as comment_count %}
 {% if comment_count > 0 %}
     <div class="row-fluid comment" id="comments">
-    {% for comment in comments reversed %}
+    {% for comment in comments %}
         {% if comment.is_removed or not comment.is_public %}
             <div id="comment_{{ comment.id }}" class="comment muted">
                 <strong>[deleted] - {{ comment.submit_date }}</strong>
