@@ -125,6 +125,7 @@ span.blog-header a:visited {
     float:left;
     margin-right: 10px;
     margin-left: 10px;
+    margin-bottom: 10px;
 }
 
 /* Laundry Formatting */
@@ -146,3 +147,6 @@ select#hall-select {
 #current-svg {
     margin-left: 125px;
 }
+
+/* Projects Formatting */
+@media (max-width: 480px) { .image { width: 100%; } }
