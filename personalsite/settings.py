@@ -197,4 +197,4 @@ MARKDOWN_DEUX_STYLES = {
 
 }
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
