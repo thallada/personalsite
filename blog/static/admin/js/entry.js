@@ -56,7 +56,7 @@ function reply(event) {
     var id = $(event.target).parents('.comment').attr('id').replace('comment_', '');
     $.ajax({
         type:'GET',
-        url:"{% url get_comment %}?id="+id,
+        url:get_comment_query+id,
         dataType:"json",
         success: function(data) {
             var lines = data.text.split('\n');
@@ -76,7 +76,7 @@ function flag(event) {
                 var id = $(event.target).parents('.comment').attr('id').replace('comment_', '');
                 $.ajax({
                     type:'GET',
-                    url:"{% url flag_comment %}?id="+id,
+                    url:flag_comment_query+id,
                     dataType:"json",
                     success: function(data) {
                         if (data.success) {

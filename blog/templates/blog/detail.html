@@ -6,6 +6,11 @@
 {% block content %}
 {% load i18n %}
 {% load markdown_deux_tags %}
+<script>
+    // Allow linked scripts to access urls generated via template tags
+    var get_comment_query = "{% url get_comment %}?id=";
+    var flag_comment_query = "{% url flag_comment %}?id=";
+</script>
 {% if form.errors %}
     <div class="alert alert-error">
         <button type="button" class="close" data-dismiss="alert">×</button>
