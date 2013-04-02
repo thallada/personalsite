@@ -61,6 +61,9 @@
 {% if comment_count > 0 %}
     <div class="row-fluid comment" id="comments">
     {% for comment in comments %}
+        {% if comment != comments.0 %}
+            <hr />
+        {% endif %}
         {% if comment.is_removed or not comment.is_public %}
             <div id="comment_{{ comment.id }}" class="comment muted">
                 <strong>[deleted] - {{ comment.submit_date }}</strong>
@@ -82,9 +85,6 @@
                     {{ comment.comment|markdown:"comment_style" }}
                 </div>
             </div>
-        {% endif %}
-        {% if comment != comments.0 %}
-            <hr />
         {% endif %}
     {% endfor %}
     </div>
