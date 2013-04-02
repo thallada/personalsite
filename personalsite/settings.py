@@ -2,7 +2,7 @@
 import os
 import secret_key
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
