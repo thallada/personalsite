@@ -213,6 +213,8 @@ def get_comment(request):
                 'user': comment.user_name,
                 },
                 ensure_ascii=False), mimetype='application/javascript')
+    else:
+        raise Http404
 
 def flag_comment(request):
     if request.is_ajax():
@@ -234,4 +236,6 @@ def flag_comment(request):
         )
         return HttpResponse(json.dumps({'success': True}, ensure_ascii=False),
                 mimetype='application/javascript')
+    else:
+        raise Http404
 
