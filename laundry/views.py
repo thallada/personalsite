@@ -22,4 +22,3 @@ def ajax_get_current(request, hall):
     filename = str(hall_obj.id) + '_current.svg'
     laundry.update(hall_obj, filepath=join(SVG_DIR, filename))
     return HttpResponse(join(SVG_URL, filename))
-

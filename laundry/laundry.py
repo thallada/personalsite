@@ -2,7 +2,8 @@ from BeautifulSoup import BeautifulSoup
 from urllib2 import urlopen
 import pygal
 from pygal.style import Style
-from models import LaundryMachine, LaundryRecord
+from models import LaundryMachine, LaundryRecord, Timeslot, LaundrySummary
+import datetime
 import logging
 logging.basicConfig(filename='laundry.log',level=logging.DEBUG)
 logging.debug('starting...')
@@ -17,12 +18,12 @@ BASE_URL_QUERY = 'http://gmu.esuds.net/RoomStatus/machineStatus.i?bottomLocation
 
 def load_data(hall):
     """Extract table data from esuds for specified hall"""
-    html = urlopen(BASE_URL_QUERY+str(int(hall.location_id))).read()
-    soup = BeautifulSoup(html) # Start cook'n
+    htsl = urlopen(BASE_URL_QUERY+str(int(hall.location_id))).read()
+    soup = BeautifulSoup(htsl) # Start cook'n
     rows = [row for row in soup.findAll('tr')[1:] if len(row('td')) > 1]
     return rows
 
-def get_num_machines_per_status(status, hall):
+def get_num_machines_per_status(status, records):
     """
     Count the number of machines in a hall which have the desired status and
     return a list that can be inputed to the pygal add series function.
@@ -30,14 +31,12 @@ def get_num_machines_per_status(status, hall):
     Returns a list of two ints. The first element is the number of washers
     with the desired status and the second is the number of dryers.
     """
-    return [len([m for m in LaundryMachine.objects.filter(type=WASHER,
-                hall=hall) if m.get_latest_record().availability == status]),
-            len([m for m in LaundryMachine.objects.filter(type=DRYER,
-                hall=hall) if m.get_latest_record().availability == status])]
+    return [len(filter(lambda r: r.machine.type == WASHER and
+                r.availability == status, records)),
+            len(filter(lambda r: r.machine.type == DRYER and
+                r.availability == status, records))]
 
-
-
-def generate_current_chart(filepath, hall):
+def generate_current_chart(filepath, records, hall):
     """
     Generate stacked bar chart of current laundry usage for specified hall and
     save svg at filepath.
@@ -46,12 +45,34 @@ def generate_current_chart(filepath, hall):
     chart = pygal.StackedBar(style=custom_style, width=800, height=512, explicit_size=True)
     chart.title = 'Current laundry machine usage in ' + hall.name
     chart.x_labels = ['Washers', 'Dryers']
-    chart.add('Available', get_num_machines_per_status(AVAILABLE, hall))
-    chart.add('In Use', get_num_machines_per_status(IN_USE, hall))
-    chart.add('Cycle Complete', get_num_machines_per_status(CYCLE_COMPLETE, hall))
-    chart.add('Unavailable', get_num_machines_per_status(UNAVAILABLE, hall))
+    chart.add('Available', get_num_machines_per_status(AVAILABLE, records))
+    chart.add('In Use', get_num_machines_per_status(IN_USE, records))
+    chart.add('Cycle Complete', get_num_machines_per_status(CYCLE_COMPLETE, records))
+    chart.add('Unavailable', get_num_machines_per_status(UNAVAILABLE, records))
     chart.range = [0, 11]
     chart.render_to_file(filepath)
+
+def generate_weekly_chart(filepath, hall):
+    # First, add a new LaundrySummary for the most recent record.
+    # TODO: determine if this step actually needs to be done or not.
+    records = list()
+    for machine in hall.machines:
+        records.append(machine.get_latest_record())
+    ts = records[0].timeslot
+    ts = ts - datetime.timedelta(minutes=ts.minute % 15,
+            seconds=ts.second, microseconds=ts.microsecond)
+    day = ts.weekday()
+    slot = Timeslot.objects.get_or_create(hall=hall, time=ts.time(), day=day)
+    LaundrySummary.objects.create(timeslot=slot,
+            washers = len([w for w in records if
+                (w.machine.type == LaundryMachine.WASHER and
+                w.availability == LaundryRecord.AVAILABLE)]),
+            dryers = len([w for w in records if
+                (w.machine.type == LaundryMachine.DRYER and
+                w.availability == LaundryRecord.AVAILABLE)]),
+    )
+    # Now, actually generate the chart by adding all of the LaundrySummaries
+    # to the chart and making all of the Timeslots the x-axis.
 
 def update(hall, filepath=None):
     """
@@ -62,6 +83,7 @@ def update(hall, filepath=None):
     filepath to save and svg file.
     """
     rows = load_data(hall)
+    records = list()
     for row in rows:
         cells = row('td')
         number = int(cells[1].contents[0])
@@ -75,6 +97,9 @@ def update(hall, filepath=None):
                 hall=hall)
         record = LaundryRecord(machine=machine, availability=availability,
                 time_remaining=time_remaining)
-        record.save()
+        if filepath:
+            records.append(record)
+        else:
+            record.save()
     if filepath:
-        generate_current_chart(filepath, hall)
+        generate_current_chart(filepath, records, hall)

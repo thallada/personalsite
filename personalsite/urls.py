@@ -10,8 +10,8 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls), name='admin'),
     url(r'^comments/', include('django.contrib.comments.urls')),
     url(r'^laundry/', include('laundry.urls')),
-    url(r'^favicon\.png$', RedirectView.as_view(
-            url=settings.STATIC_URL + 'img/favicon.png'), name='favicon'),
+#    url(r'^favicon\.png$', RedirectView.as_view(
+#            url=settings.STATIC_URL + 'img/favicon.png'), name='favicon'),
     url(r'', include('blog.urls')),
 )
 

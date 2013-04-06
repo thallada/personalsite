@@ -13,7 +13,7 @@ class LaundryMachine(models.Model):
     )
     number = models.PositiveSmallIntegerField() # number assigned by esuds
     type = models.TextField(choices=MACHINE_TYPES)
-    hall = models.ForeignKey('Hall')
+    hall = models.ForeignKey('Hall', related_name='machine')
 
     def get_latest_record(self):
         records = self.records.all()
@@ -34,3 +34,21 @@ class LaundryRecord(models.Model):
     availability = models.TextField(choices=AVAILABILITIES)
     time_remaining = models.IntegerField(null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+class Timeslot(models.Model):
+    hall = models.ForeignKey('Hall', related_name='timeslots')
+    day = models.SmallIntegerField()
+    time = models.TimeField()
+
+    def washer_avg(self):
+        summaries = self.summaries.all()
+        return (sum(s.washers for s in summaries) / (len(summaries)) or 1)
+
+    def dryer_avg(self):
+        summaries = self.summaries.all()
+        return (sum(s.dryers for s in summaries) / (len(summaries)) or 1)
+
+class LaundrySummary(models.Model):
+    timeslot = models.ForeignKey('Timeslot', related_name='summaries')
+    washers = models.IntegerField()
+    dryers = models.IntegerField()
