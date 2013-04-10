@@ -143,6 +143,7 @@ select#hall-select {
     background: #202020;
     border: 0;
     color: #888888;
+    width: 350px;
 }
 #current-svg {
     margin-left: 125px;
