@@ -12,4 +12,5 @@ apache
 blog/static/admin
 old
 *db
-personalsite/secret_key.py
+personalsite/secrets.py
+*.svg

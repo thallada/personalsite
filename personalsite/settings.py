@@ -1,6 +1,6 @@
 # Django settings for personalsite project.
 import os
-import secret_key
+import secrets
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -16,10 +16,10 @@ PROJECT_PATH = os.path.join(os.path.abspath(os.path.dirname(__file__)), '..')
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'thallada+blog',
-        'USER': 'thallada',
-        'PASSWORD': 'marinesandstorm',
-        'HOST': 'sql.mit.edu',
+        'NAME': secrets.DATABASE_NAME,
+        'USER': secrets.DATABASE_USER,
+        'PASSWORD': secrets.DATABASE_PASSWORD,
+        'HOST': secrets.DATABASE_HOST,
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -91,7 +91,7 @@ STATICFILES_FINDERS = (
 )
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = secret_key.SECRET_KEY
+SECRET_KEY = secrets.SECRET_KEY
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
