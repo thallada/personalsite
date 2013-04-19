@@ -1,4 +1,5 @@
 var request = undefined;
+var pending = false;
 
 $(document).ready(function () {
     if ($.cookie('hall') !== undefined) {
@@ -11,18 +12,24 @@ $(document).ready(function () {
     });
 });
 
+$.ajaxStart(function () { pending = true; });
+
+$.ajaxStop(function () { pending = false; });
+
 function update_charts(selected) {
-    if (request !== undefined) {
-        request.abort();
+    if (!pending) {
+        if (request !== undefined) {
+            request.abort();
+        }
+        var svg = $('#current-svg');
+        $('#current-svg').remove();
+        $('div.current-chart').append('<img id="loading" style="margin-top: 5%" src="http://www.google.com/images/loading.gif" />');
+        request = $.ajax({
+            url: '/laundry/ajax/current/' + halls[selected]
+        }).done(function (result) {
+            svg = svg.attr('src', result);
+            $('#loading').remove();
+            $('.current-chart').append(svg);
+        });
     }
-    var svg = $('#current-svg');
-    $('#current-svg').remove();
-    $('div.current-chart').append('<img id="loading" style="margin-top: 5%" src="http://www.google.com/images/loading.gif" />');
-    request = $.ajax({
-        url: '/laundry/ajax/current/' + halls[selected]
-    }).done(function (result) {
-        svg = svg.attr('src', result);
-        $('#loading').remove();
-        $('.current-chart').append(svg);
-    });
 }
