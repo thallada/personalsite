@@ -23,7 +23,7 @@
     </div>
     {% if project.img_link %}
         <div class="image">
-            <img src="{{ project.img_link }}" class="img-polaroid" />
+            <a href="{{ project.link }}"><img src="{{ project.img_link }}" class="img-polaroid" /></a>
         </div>
     {% endif %}
     <div class="row-fluid content">
