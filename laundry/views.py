@@ -11,7 +11,8 @@ SVG_URL = settings.STATIC_URL
 
 def main_page(request):
     # pass the halls to the html, and let cookies/user decide which to pick
-    halls = [(hall.name, hall.id) for hall in Hall.objects.all()]
+    halls = [(hall.name, hall.id) for hall in
+             Hall.objects.all().order_by('name')]
     return render_to_response('laundry/main.html', {
             'halls': halls,
             },

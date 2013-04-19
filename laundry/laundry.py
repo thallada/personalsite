@@ -4,9 +4,6 @@ import pygal
 from pygal.style import Style
 from models import LaundryMachine, LaundryRecord, Timeslot, LaundrySummary
 import datetime
-import logging
-logging.basicConfig(filename='laundry.log',level=logging.DEBUG)
-logging.debug('starting...')
 
 WASHER = LaundryMachine.WASHER
 DRYER = LaundryMachine.DRYER
@@ -52,25 +49,28 @@ def generate_current_chart(filepath, records, hall):
     chart.range = [0, 11]
     chart.render_to_file(filepath)
 
-def generate_weekly_chart(filepath, hall):
+# NOTE: Abandoning generating the weekly chart via mysql and Django for now.
+# (cron script and csv file is just easier) Sorry if there are a lot of
+# skeletons lying around as a result of this abandonment.
+#def generate_weekly_chart(filepath, hall):
     # First, add a new LaundrySummary for the most recent record.
     # TODO: determine if this step actually needs to be done or not.
-    records = list()
-    for machine in hall.machines:
-        records.append(machine.get_latest_record())
-    ts = records[0].timeslot
-    ts = ts - datetime.timedelta(minutes=ts.minute % 15,
-            seconds=ts.second, microseconds=ts.microsecond)
-    day = ts.weekday()
-    slot = Timeslot.objects.get_or_create(hall=hall, time=ts.time(), day=day)
-    LaundrySummary.objects.create(timeslot=slot,
-            washers = len([w for w in records if
-                (w.machine.type == LaundryMachine.WASHER and
-                w.availability == LaundryRecord.AVAILABLE)]),
-            dryers = len([w for w in records if
-                (w.machine.type == LaundryMachine.DRYER and
-                w.availability == LaundryRecord.AVAILABLE)]),
-    )
+    #records = list()
+    #for machine in hall.machines:
+        #records.append(machine.get_latest_record())
+    #ts = records[0].timeslot
+    #ts = ts - datetime.timedelta(minutes=ts.minute % 15,
+            #seconds=ts.second, microseconds=ts.microsecond)
+    #day = ts.weekday()
+    #slot = Timeslot.objects.get_or_create(hall=hall, time=ts.time(), day=day)
+    #LaundrySummary.objects.create(timeslot=slot,
+            #washers = len([w for w in records if
+                #(w.machine.type == LaundryMachine.WASHER and
+                #w.availability == LaundryRecord.AVAILABLE)]),
+            #dryers = len([w for w in records if
+                #(w.machine.type == LaundryMachine.DRYER and
+                #w.availability == LaundryRecord.AVAILABLE)]),
+    #)
     # Now, actually generate the chart by adding all of the LaundrySummaries
     # to the chart and making all of the Timeslots the x-axis.
 
@@ -86,15 +86,30 @@ def update(hall, filepath=None):
     records = list()
     for row in rows:
         cells = row('td')
-        number = int(cells[1].contents[0])
+        # Some small laundry rooms (with only two machines) do not label their
+        # machines. Our database represents "unlabeled" as 0. We will just have
+        # to rely on the type of the machine when searching.
+        if str(cells[1].contents[0]) == "unlabeled":
+            number = 0
+        else:
+            number = int(cells[1].contents[0])
         type = cells[2].contents[0]
+        # For some reason there is a distinction between normal and "stacked"
+        # washers/dryers in esuds; we only need normal, so cut "stacked" off.
         if type == 'Stacked Dryer': type = type[8:]
+        if type == 'Stacked Washer': type = type[8:]
+        # Since Presidents Park - Harrison apparently has freak Washer/Dryer
+        # hybrids, we will just ignore the type field when getting the machine.
+        if type == 'Stacked Washer/Dryer': type = None
         availability = cells[3].contents[1].contents[0]
         time_remaining = None
         if cells[4].contents[0] != '&nbsp;':
             time_remaining = int(cells[4].contents[0])
-        machine = LaundryMachine.objects.get(number=number, type=type,
-                hall=hall)
+        if type:
+            machine = LaundryMachine.objects.get(number=number, type=type,
+                    hall=hall)
+        else: # Search without type, for Presidents Park - Harrison
+            machine = LaundryMachine.objects.get(number=number, hall=hall)
         record = LaundryRecord(machine=machine, availability=availability,
                 time_remaining=time_remaining)
         if filepath:
