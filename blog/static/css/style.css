@@ -1,6 +1,7 @@
 /* Base Formatting */
 body {
     background: url(/static/admin/img/diagonal-noise.png) repeat;
+    font-size: 16px;
 }
 div.row-fluid.blog-header {
     padding-top:10px;
