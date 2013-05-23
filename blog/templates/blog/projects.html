@@ -3,6 +3,7 @@
 {% block content %}
         {% load i18n %}
     {% load markdown_deux_tags %}
+    <style>div.content-area { max-width: 800px; }</style>
     {% for project in projects %}
     <div id="project_{{ project.id }}">
         <div class="row-fluid header">
@@ -36,11 +37,11 @@
     {% endfor %}
     <div class="pagination pagination-centered">
         <ul style="background:white;">
-            <li{% if not projects.has_previous %} class="disabled"><span>«</span>{% else %}><a href="?page={{ projects.previous_page_number }}">«</a>{% endif %}</li>
+            <li{% if not projects.has_previous %} class="disabled"><span>«</span>{% else %}<a href="?page={{ projects.previous_page_number }}">«</a>{% endif %}</li>
             {% for page in projects.paginator.page_range %}
-            <li{% if page == projects.number %} class="active"><span>{{ page }}</span>{% else %}><a href="?page={{ page }}">{{ page }}</a>{% endif %}</li>
+            <li{% if page == projects.number %} class="active"><span>{{ page }}</span>{% else %}<a href="?page={{ page }}">{{ page }}</a>{% endif %}</li>
             {% endfor %}
-            <li{% if not projects.has_next %} class="disabled"><span>»</span>{% else %}><a href="?page={{ projects.next_page_number }}">»</a>{% endif %}</li>
+            <li{% if not projects.has_next %} class="disabled"><span>»</span>{% else %}<a href="?page={{ projects.next_page_number }}">»</a>{% endif %}</li>
         </ul>
     </div>
 {% endblock %}
