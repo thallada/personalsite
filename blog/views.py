@@ -37,7 +37,8 @@ def index(request, tags=None):
         for tag in tags[1:]:
             entries_list = entries_list.filter(tags__name__icontains=tag)
     else:
-        entries_list = Entry.objects.public().order_by(order_by)
+        entries_list = Entry.objects.public()
+    entries_list = entries_list.order_by(order_by)
     paginator = Paginator(entries_list, num) # Show num entries per page
     page = request.GET.get('page')
     try:
