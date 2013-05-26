@@ -9,6 +9,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.utils.feedgenerator import Rss201rev2Feed
 from django.contrib.sites.models import get_current_site
+import datetime
 
 
 class Tag(models.Model):
@@ -18,13 +19,20 @@ class Tag(models.Model):
         return self.name
 
 
+class EntryManager(models.Manager):
+    def public(self):
+        return super(EntryManager, self).all().filter(
+                pub_date__isnull=False)
+
+
 class Entry(models.Model):
     title = models.CharField('entry title', max_length=160, unique=True)
     slug = models.SlugField('slug', max_length=100, unique=True)
     text = models.TextField()
-    pub_date = models.DateTimeField('date published', auto_now_add=True)
+    pub_date = models.DateTimeField('date published', null=True, blank=True)
     last_mod = models.DateTimeField('last modified', auto_now=True)
     tags = models.ManyToManyField(Tag, null=True, blank=True)
+    objects = EntryManager()
 
     def __unicode__(self):
         return self.title
@@ -32,6 +40,19 @@ class Entry(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('detail', None, {'slug': self.slug})
+
+    def publish(self):
+        if not self.pub_date:
+            self.pub_date = datetime.now()
+
+    def unpublish(self):
+        if self.pub_date:
+            self.pub_date = None
+
+    def _is_published(self):
+        return bool(self.pub_date)
+
+    published = property(_is_published)
 
     class Meta:
         verbose_name_plural = 'entries'

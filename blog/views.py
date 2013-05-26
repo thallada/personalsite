@@ -33,11 +33,11 @@ def index(request, tags=None):
     order_by = request.GET.get('order_by', '-pub_date')
     if tags:
         tags = tags.split('+')
-        entries_list = Entry.objects.filter(tags__name__icontains=tags[0])
+        entries_list = Entry.objects.public().filter(tags__name__icontains=tags[0])
         for tag in tags[1:]:
             entries_list = entries_list.filter(tags__name__icontains=tag)
     else:
-        entries_list = Entry.objects.all().order_by(order_by)
+        entries_list = Entry.objects.public().order_by(order_by)
     paginator = Paginator(entries_list, num) # Show num entries per page
     page = request.GET.get('page')
     try:
@@ -163,7 +163,7 @@ def detail(request, slug, next=None, using=None):
 def archive(request):
     # Show all comments sorted by date descending.
     entries = [(e.pub_date.strftime('%b %d, %Y'), e)
-            for e in reversed(Entry.objects.all())]
+            for e in reversed(Entry.objects.public())]
     return render_to_response('blog/archive.html',
             {'entries': entries}, context_instance=RequestContext(request))
 
