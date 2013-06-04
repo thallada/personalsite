@@ -43,7 +43,7 @@ class Entry(models.Model):
 
     def publish(self):
         if not self.pub_date:
-            self.pub_date = datetime.now()
+            self.pub_date = datetime.datetime.now()
 
     def unpublish(self):
         if self.pub_date:
