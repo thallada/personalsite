@@ -5,7 +5,7 @@ import markdown_deux
 from django.contrib.comments.signals import comment_was_flagged
 from django.contrib.comments.signals import comment_was_posted
 from django.dispatch import receiver
-from django.core.mail import send_mail
+from django.core.mail import send_mail, mail_admins
 from django.conf import settings
 from django.utils.feedgenerator import Rss201rev2Feed
 from django.contrib.sites.models import get_current_site
@@ -93,37 +93,33 @@ class Project(models.Model):
 @receiver(comment_was_posted)
 def comment_handler(sender, **kwargs):
     domain = 'http://' + get_current_site(kwargs['request']).domain
-    title = "[hallada.net] Comment was added to \"%s\" by %s" % (
-            kwargs['comment'].content_object.title,
-            kwargs['comment'].user_name,
-    )
-    message = "View comment: %s%s | Edit comment: %s%s\n\n%s" % (
+    title = "[hallada.net] Comment was added"
+    message = "View comment: %s%s | Edit comment: %s%s\n\n" \
+            "Comment by %s at %s\n%s" % (
             domain, kwargs['comment'].get_absolute_url(),
             domain, reverse('admin:comments_comment_change',
                     args=(kwargs['comment'].id,)),
+            kwargs['comment'].user_name,
+            kwargs['comment'].submit_date,
             kwargs['comment'].comment
     )
-    from_addr = "no-reply@hallada.net"
-    recipient_list = [settings.ADMINS[0][1]]
-    send_mail(title, message, from_addr, recipient_list)
+    mail_admins(title, message)
 
 
 @receiver(comment_was_flagged)
 def commentflag_handler(sender, **kwargs):
     domain = 'http://' + get_current_site(kwargs['request']).domain
-    title = "[hallada.net] Comment by %s on \"%s\" was flagged" % (
-            kwargs['comment'].user_name,
-            kwargs['comment'].content_object.title,
-    )
+    title = "[hallada.net] Comment was flagged"
     message = "View comment: %s%s | Edit comment: %s%s | " \
-            "Edit flag: %s%s\n\n%s" % (
+            "Edit flag: %s%s\n\nFlagged by %s\nComment by %s at %s\n%s" % (
             domain, kwargs['comment'].get_absolute_url(),
             domain, reverse('admin:comments_comment_change',
                     args=(kwargs['comment'].id,)),
             domain, reverse('admin:comments_commentflag_change',
                     args=(kwargs['flag'].id,)),
+            str(kwargs['flag'].user),
+            kwargs['comment'].user_name,
+            kwargs['comment'].submit_date,
             kwargs['comment'].comment
     )
-    from_addr = "no-reply@hallada.net"
-    recipient_list = [settings.ADMINS[0][1]]
-    send_mail(title, message, from_addr, recipient_list)
+    mail_admins(title, message)

@@ -3,6 +3,10 @@ body {
     background: url(/static/admin/img/diagonal-noise.png) repeat;
     font-size: 16px;
 }
+hr {
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
 div.row-fluid.blog-header {
     padding-top:10px;
 }
@@ -69,12 +73,23 @@ span.blog-header a:visited {
 }
 .comment-content {
     margin-left:20px;
+    float: left;
+    width: 100%;
+    display: inline-block;
 }
 #id_comment {
     width:75%;
 }
 .comment-header {
+    width: 100%;
+    display: inline-block;
+}
+.comment-info {
     float:left;
+}
+.comment-divider {
+    width: 100%;
+    display: inline-block;
 }
 .comment-actions {
     float:right;

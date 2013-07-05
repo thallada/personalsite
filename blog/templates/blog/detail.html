@@ -62,7 +62,9 @@
     <div class="row-fluid comment" id="comments">
     {% for comment in comments %}
         {% if comment != comments.0 %}
-            <hr />
+            <div class="comment-divider">
+                <hr />
+            </div>
         {% endif %}
         {% if comment.is_removed or not comment.is_public %}
             <div id="comment_{{ comment.id }}" class="comment muted">
@@ -75,12 +77,13 @@
         {% else %}
             <div id="comment_{{ comment.id }}" class="comment">
                 <div class="comment-header">
-                    <strong>{% if comment.user_url %}<a href="{{ comment.user_url }}">{{ comment.user_name }}</a>{% else %}{{ comment.user_name }}{% endif %} - {{ comment.submit_date }}</strong>
+                    <div class="comment-info">
+                        <strong>{% if comment.user_url %}<a href="{{ comment.user_url }}">{{ comment.user_name }}</a>{% else %}{{ comment.user_name }}{% endif %} - {{ comment.submit_date }}</strong>
+                    </div>
+                    <div class="comment-actions">
+                        <a href="#comment-form" onclick="reply(event);"><i class="icon-share-alt"></i> reply</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="flag(event); return false;"><i class="icon-flag"></i> report</a>
+                    </div>
                 </div>
-                <div class="comment-actions">
-                    <a href="#comment-form" onclick="reply(event);"><i class="icon-share-alt"></i> reply</a>&nbsp;&nbsp;&nbsp;&nbsp;<a href="#" onclick="flag(event); return false;"><i class="icon-flag"></i> report</a>
-                </div>
-                <br />
                 <div class="comment-content">
                     {{ comment.comment|markdown:"comment_style" }}
                 </div>
