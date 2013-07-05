@@ -239,4 +239,3 @@ def flag_comment(request):
                 mimetype='application/javascript')
     else:
         raise Http404
-
