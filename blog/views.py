@@ -218,24 +218,25 @@ def get_comment(request):
         raise Http404
 
 def flag_comment(request):
-    if request.is_ajax():	
-	id = request.GET.get('id', None)
-	if not id:
-	    raise Http404
-	comment = get_object_or_404(comments.get_model(), pk=id)
-	flag, created = comments.models.CommentFlag.objects.get_or_create(
-	    comment = comment,
-	    user    = User.objects.all()[0],
-	    flag    = comments.models.CommentFlag.SUGGEST_REMOVAL
-	)
-	signals.comment_was_flagged.send(
-	    sender  = comment.__class__,
-	    comment = comment,
-	    flag    = flag,
-	    created = created,
-	    request = request,
-	)
-	return HttpResponse(json.dumps({'success': True}, ensure_ascii=False),
-		mimetype='application/javascript')
+    if request.is_ajax():
+        id = request.GET.get('id', None)
+        if not id:
+            raise Http404
+        comment = get_object_or_404(comments.get_model(), pk=id)
+        flag, created = comments.models.CommentFlag.objects.get_or_create(
+            comment = comment,
+            user    = User.objects.all()[0],
+            flag    = comments.models.CommentFlag.SUGGEST_REMOVAL
+        )
+        signals.comment_was_flagged.send(
+            sender  = comment.__class__,
+            comment = comment,
+            flag    = flag,
+            created = created,
+            request = request,
+        )
+        return HttpResponse(json.dumps({'success': True}, ensure_ascii=False),
+                mimetype='application/javascript')
     else:
         raise Http404
+
