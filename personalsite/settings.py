@@ -204,3 +204,6 @@ ABSOLUTE_URL_OVERRIDES = {
 
 #EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# The endpoint of the API url used to post entries from http://draftin.com
+DRAFT_PUBLISH_KEY = secrets.DRAFT_PUBLISH_KEY

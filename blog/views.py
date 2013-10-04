@@ -1,10 +1,11 @@
 from django.template import RequestContext
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from blog.models import Entry, Project
 from django.contrib.comments import Comment
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.comments.views.comments import CommentPostBadRequest
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.utils.html import escape
@@ -14,6 +15,7 @@ from django.contrib.comments import signals
 from django.contrib.auth.models import User
 from django.http import Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.template.defaultfilters import slugify
 import json
 import markdown_deux
 
@@ -238,4 +240,25 @@ def flag_comment(request):
         return HttpResponse(json.dumps({'success': True}, ensure_ascii=False),
                 mimetype='application/javascript')
     else:
+        raise Http404
+
+@require_POST
+@csrf_exempt
+def publish_draft_doc(request):
+    # WebHook for publishing a blog entry from http://draftin.com
+    if 'payload' in request.POST:
+        payload = json.loads(request.POST['payload'])
+        # construct new blog entry from draft json data
+        # TODO: figure out a way to do tags
+        new_post = Entry.objects.create(title=payload['name'],
+                slug=slugify(payload['name']),
+                text=payload['content'])
+        new_post.publish() # make public
+        new_post.save()
+        response = HttpResponse()
+        # Tell draft where it was posted
+        response['Location'] = new_post.get_absolute_url()
+        return response
+    else:
+        # Got a bad post
         raise Http404
