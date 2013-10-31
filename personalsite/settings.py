@@ -2,7 +2,7 @@
 import os
 import secrets
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -122,7 +122,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    'django.contrib.comments',
+    #'django.contrib.comments',
     'django.contrib.markup',
     'markdown_deux',
     'blog',

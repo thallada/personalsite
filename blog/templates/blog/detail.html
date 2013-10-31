@@ -6,6 +6,7 @@
 {% block content %}
 {% load i18n %}
 {% load markdown_deux_tags %}
+{% comment %}
 <script>
     // Allow linked scripts to access urls generated via template tags
     var get_comment_query = "{% url get_comment %}?id=";
@@ -38,6 +39,7 @@
     <h4>Reported comment</h4>
     Thank you for taking the time to improve the quality of discussion.
 </div>
+{% endcomment %}
 <div class="row-fluid header">
     <div class="entry-title">
         <h2><a href="{{ entry.get_absolute_url }}">{{ entry.title }}</a></h2>
@@ -56,6 +58,7 @@
             {% endfor %}
         </div>
 </div>
+{% comment %}
 {% load comments %}
 {% get_comment_count for entry as comment_count %}
 {% if comment_count > 0 %}
@@ -137,4 +140,5 @@
 <div id="report" title="Report Comment" style="display:none;">
     Are you sure that you want to report this comment?
 </div>
+{% endcomment %}
 {% endblock %}
