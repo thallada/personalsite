@@ -165,6 +165,12 @@ select#hall-select {
 #current-svg {
     margin-left: 125px;
 }
+p.error {
+    color: FireBrick;
+    width: 600px;
+    display: block;
+    margin: 30px auto;
+}
 
 /* Projects Formatting */
 @media (max-width: 480px) { .image { width: 100%; } }
