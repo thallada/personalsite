@@ -25,5 +25,5 @@ def ajax_get_current(request, hall):
     try:
         laundry.update(hall_obj, filepath=join(SVG_DIR, filename))
     except ObjectDoesNotExist:
-        raise HttpResponse(status=500);
+        return HttpResponse(status=500);
     return HttpResponse(join(SVG_URL, filename))
