@@ -35,9 +35,9 @@ function update_charts(selected) {
             $('#loading').remove();
             $('.current-chart').append(
                 '<p class="error">Oops. My webscraping script broke. Either ' +
-                'eSuds changed their website or Mason switched the laundry ' +
-                'rooms up. I\'ve been emailed and will try to fix it soon. ' +
-                ':)</p>');
+                'eSuds is down or changed their website or Mason switched ' + 
+		'the laundry rooms up. I\'ve been emailed and will try to ' +
+		'fix it soon. :)</p>');
         });
     }
 }
